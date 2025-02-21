@@ -2,3 +2,4 @@
 
 export(createPlotObject)
 export(makeSCHeatmap)
+export(saveCustomPlot)
