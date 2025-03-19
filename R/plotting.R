@@ -105,7 +105,7 @@ makeSCHeatmap <- function(obj,
     use_raster = FALSE
   )
 
-  return(list("Plot" = ht, "PlotData" = plot.data))
+  return(list("Plot" = ht, "PlotData" = list("PlotData" = plot.data, "Clustering" = hc_re)))
 
 }
 
