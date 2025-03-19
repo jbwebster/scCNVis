@@ -89,7 +89,7 @@ makeSCHeatmap <- function(obj,
 
   ht <- ComplexHeatmap::Heatmap(
     plot.data,
-    name = value,
+    name = legend.title,
     col = color.map,
     cluster_rows = hc_re,
     cluster_columns = FALSE,
