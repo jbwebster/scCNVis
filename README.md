@@ -21,9 +21,15 @@ BiocManager:;install("GenomicRanges")
 
 A high-level overview of how the package works is outlined below. More in-depth examples can be found HERE.
 
-SCCNVis works with SCCNVis objects. This provides a common format that can be created using the outputs from any of the common CNV callers. To create a SCCNVis object, you need 1) a matrix (rows = cells, columns = regions) with copy number values, 2) a list of cell names (should be the same length as nrows(matrix) and 3) a GenomicRanges::GRanges object describing the columns of the matrix. For example, if the input matrix describes 1000 cells and a binned genome resulting in 3000 bins, then the cells list should have 1000 cell names and the GRanges object should describe 3000 genomic regions. 
+SCCNVis works with SCCNVis objects. This provides a common format that can be created using the outputs from any of the common CNV callers. To create a SCCNVis object, you need 1) a matrix (rows = cells, columns = regions) with copy number values, 2) a list of cell names (should be the same length as nrows(matrix) and 3) a GenomicRanges::GRanges object describing the columns of the matrix. For example, if the input matrix describes 1000 cells and a binned genome resulting in 3000 bins, then the cells list should have 1000 cell names and the GRanges object should describe 3000 genomic regions. The package includes some example data, which I use below
 
-`obj <- createPlotObject(input.matrix, cell.names, granges)`
+`
+library(SCCNVis)
+input.matrix <- example.matrix
+cell.names <- example.cells
+granges <- example.granges
+obj <- createPlotObject(input.matrix, cell.names, granges)
+`
 
 The resulting `obj` output can then be passed into any of the available plotting functions. For example:
 
