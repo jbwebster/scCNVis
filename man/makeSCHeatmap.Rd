@@ -18,7 +18,7 @@ makeSCHeatmap(obj, gr = NULL, add.noise = T, color.map = NULL, verbose = F)
 \item{color.ramp}{A color ramp generated using circlize::colorRamp2. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL}
 }
 \value{
-Returns a ComplexHeatmap object
+Returns a list containing a "Plot" (ComplexHeatmap) and "PlotData" (matrix)
 }
 \description{
 This function takes a SCCNVisObject and outputs a ComplexHeatmap::Heatmap object

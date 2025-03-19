@@ -4,7 +4,7 @@
 \alias{saveCustomPlot}
 \title{Helper function for saving a generated plot}
 \usage{
-saveCustomPlot(p, filename, width = 7, height = 7, format = "png")
+saveCustomPlot(p, filename, width = 14, height = 7, format = "png")
 }
 \arguments{
 \item{p}{Plot object}

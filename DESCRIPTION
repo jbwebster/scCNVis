@@ -14,7 +14,8 @@ Imports:
     GenomicRanges,
     ggplot2,
     ComplexHeatmap,
-    parallelDist
+    parallelDist,
+    dplyr
 Depends: 
     R (>= 2.10)
 LazyData: true
