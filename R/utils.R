@@ -54,7 +54,7 @@ createPlotObject <- function(input.matrix, cell.names, granges) {
 #' @param format Format of output file. Should be "png" or "pdf"
 #' @return None
 #' @export
-saveCustomPlot <- function(p, filename, width = 7, height = 7, format = "png") {
+saveCustomPlot <- function(p, filename, width = 14, height = 7, format = "png") {
   if (format != "png" & format != "pdf") {
     stop("format must == 'png' or 'pdf'")
   }
@@ -63,8 +63,16 @@ saveCustomPlot <- function(p, filename, width = 7, height = 7, format = "png") {
     stop("filename must not be NULL")
   }
 
-  #Custom heatmap
-  if(class(p) == "Heatmap") {
+  #Non-heatmaps
+  if(length(p)>1) {
+    if (format == "png") {
+      ggplot2::ggsave(filename, width = width, height = height, units = "in", dpi = 700)
+    }
+    if (format == "pdf") {
+      ggplot2::ggsave(filename, width = width, height = height, units = "in", dpi = 700)
+    }
+  }
+  else if(class(p) == "Heatmap") {
     if (format == "png") {
       png(filename, width = width, height = height, units = "in", res = 1000)
       ComplexHeatmap::draw(p)
@@ -84,7 +92,7 @@ saveCustomPlot <- function(p, filename, width = 7, height = 7, format = "png") {
   for(seqname in unique(df.gr$seqnames)) {
     curr.indices <- df.gr[df.gr$seqnames==seqname,"index"]
     curr.mat <- input[input$rn %in% curr.indices,]
-    ma <- filter(curr.mat, rep(1 / window.size, window.size), sides = 2)
+    ma <- stats::filter(curr.mat, rep(1 / window.size, window.size), sides = 2)
     out <- rbind(out, data.frame("index" = curr.indices, "moving.average" = ma[,2]))
   }
   out[2:nrow(out),]

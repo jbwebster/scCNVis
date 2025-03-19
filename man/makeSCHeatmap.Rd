@@ -4,7 +4,14 @@
 \alias{makeSCHeatmap}
 \title{Create a custom heatmap of copy number data}
 \usage{
-makeSCHeatmap(obj, gr = NULL, add.noise = T, color.map = NULL, verbose = F)
+makeSCHeatmap(
+  obj,
+  gr = NULL,
+  add.noise = T,
+  color.map = NULL,
+  legend.title = "Value",
+  verbose = F
+)
 }
 \arguments{
 \item{obj}{A SCCNVisObject made using createPlotObject()}
@@ -13,12 +20,14 @@ makeSCHeatmap(obj, gr = NULL, add.noise = T, color.map = NULL, verbose = F)
 
 \item{add.noise}{Add minor noise to the data for clustering purposes. Default = TRUE}
 
+\item{legend.title}{Title for the legend describing the heatmap. Often something like "log2(copy ratio)" or some other metric. Default = "Value"}
+
 \item{verbose}{Verbose logging. Default = FALSE}
 
 \item{color.ramp}{A color ramp generated using circlize::colorRamp2. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL}
 }
 \value{
-Returns a ComplexHeatmap object
+Returns a list containing a "Plot" (ComplexHeatmap) and "PlotData" (matrix)
 }
 \description{
 This function takes a SCCNVisObject and outputs a ComplexHeatmap::Heatmap object
