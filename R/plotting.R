@@ -6,6 +6,7 @@
 #' @param gr A GenomicRanges:GRanges object of the regions to graph. If NULL, all regions will be plotted. Default = NULL
 #' @param add.noise Add minor noise to the data for clustering purposes. Default = TRUE
 #' @param color.ramp A color ramp generated using circlize::colorRamp2. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL
+#' @param legend.title Title for the legend describing the heatmap. Often something like "log2(copy ratio)" or some other metric. Default = "Value"
 #' @param verbose Verbose logging. Default = FALSE
 #' @return Returns a list containing a "Plot" (ComplexHeatmap) and "PlotData" (matrix)
 #' @export
@@ -13,6 +14,7 @@ makeSCHeatmap <- function(obj,
                           gr = NULL,
                           add.noise = T,
                           color.map = NULL,
+                          legend.title = "Value",
                           verbose = F) {
   .validateObject(obj)
 
@@ -87,7 +89,7 @@ makeSCHeatmap <- function(obj,
 
   ht <- ComplexHeatmap::Heatmap(
     plot.data,
-    name = "Heatmap",
+    name = value,
     col = color.map,
     cluster_rows = hc_re,
     cluster_columns = FALSE,

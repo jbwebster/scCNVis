@@ -4,7 +4,14 @@
 \alias{makeSCHeatmap}
 \title{Create a custom heatmap of copy number data}
 \usage{
-makeSCHeatmap(obj, gr = NULL, add.noise = T, color.map = NULL, verbose = F)
+makeSCHeatmap(
+  obj,
+  gr = NULL,
+  add.noise = T,
+  color.map = NULL,
+  legend.title = "Value",
+  verbose = F
+)
 }
 \arguments{
 \item{obj}{A SCCNVisObject made using createPlotObject()}
@@ -12,6 +19,8 @@ makeSCHeatmap(obj, gr = NULL, add.noise = T, color.map = NULL, verbose = F)
 \item{gr}{A GenomicRanges:GRanges object of the regions to graph. If NULL, all regions will be plotted. Default = NULL}
 
 \item{add.noise}{Add minor noise to the data for clustering purposes. Default = TRUE}
+
+\item{legend.title}{Title for the legend describing the heatmap. Often something like "log2(copy ratio)" or some other metric. Default = "Value"}
 
 \item{verbose}{Verbose logging. Default = FALSE}
 
