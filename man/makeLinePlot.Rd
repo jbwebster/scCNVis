@@ -10,9 +10,11 @@ makeLinePlot(
   window.size = 5,
   clusters = NULL,
   cluster.colors = NULL,
+  cluster.label = "",
   plot.average.of.clusters = FALSE,
   avg.color = "red",
   show.x.ticks = FALSE,
+  ylab = "",
   verbose = F
 )
 }
@@ -27,11 +29,15 @@ makeLinePlot(
 
 \item{cluster.colors}{Named character vector. Names should the cluster names, values are the colors. Default = NULL}
 
+\item{cluster.label}{Character. If clusters are provided, this is used as the title of the legend. Not used if plot.average.of.clusters == TRUE. Default = ""}
+
 \item{plot.average.of.clusters}{Logical. If TRUE, plot each cluster individually and an additional line representing the average of each cluster. Default = FALSE}
 
 \item{avg.color}{Color. Used for the color of the cluster average, if plot.average.of.clusters == T. Default = 'red'}
 
 \item{show.x.ticks}{Logical. If TRUE, show tick marks on X axis. Only recommended when showing smaller regions. Default = FALSE}
+
+\item{ylab}{Character. Label of y axis. Default = ""}
 
 \item{verbose}{Verbose logging. Default = FALSE}
 }

@@ -83,8 +83,9 @@ print(clusters[1:5])
 
 One difference between these subclones was chrX. We could create a line plot
 to further observe the differences between these groups on that chromosome.
-I have added a few optional parameters are also provided, for additional
-customization.
+I have added a few optional parameters, for additional customization. Note
+that the resulting `lineplot.result$Plot` is a ggplot object, which can be
+further modified by the user if desired.
 
 ```{r}
 #Subset the example granges object down to only chrX
