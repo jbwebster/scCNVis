@@ -117,9 +117,11 @@ makeSCHeatmap <- function(obj,
 #' @param window.size Window size for moving average calculation
 #' @param clusters Named character vector specifying clusters for cells. names(clusters) should give a list of cells to plot, and can be used to plot a subset of the data. Values are cluster names. Default = NULL
 #' @param cluster.colors Named character vector. Names should the cluster names, values are the colors. Default = NULL
+#' @param cluster.label Character. If clusters are provided, this is used as the title of the legend. Not used if plot.average.of.clusters == TRUE. Default = ""
 #' @param plot.average.of.clusters Logical. If TRUE, plot each cluster individually and an additional line representing the average of each cluster. Default = FALSE
 #' @param avg.color Color. Used for the color of the cluster average, if plot.average.of.clusters == T. Default = 'red'
 #' @param show.x.ticks Logical. If TRUE, show tick marks on X axis. Only recommended when showing smaller regions. Default = FALSE
+#' @param ylab Character. Label of y axis. Default = ""
 #' @param verbose Verbose logging. Default = FALSE
 #' @return Returns a list containing "Plot" (ggplot) and "PlotData" (data.frame)
 #' @export
@@ -128,9 +130,11 @@ makeLinePlot <- function(obj,
                          window.size = 5,
                          clusters = NULL,
                          cluster.colors = NULL,
+                         cluster.label = "",
                          plot.average.of.clusters = FALSE,
                          avg.color = 'red',
                          show.x.ticks = FALSE,
+                         ylab = "",
                          verbose = F) {
 
   .validateObject(obj)
@@ -182,7 +186,7 @@ makeLinePlot <- function(obj,
       res.mgr <- rbind(res.mgr, mgr)
     }
   }
-
+  res.mgr$group <- factor(res.mgr$group)
   res.mgr$middle <- res.mgr$start + ((res.mgr$end - res.mgr$start) / 2)
 
   if(plot.average.of.clusters) {
@@ -190,7 +194,7 @@ makeLinePlot <- function(obj,
       group_by(index, seqnames, start, end, middle, width, strand) %>%
       summarise(moving.average = mean(moving.average), group = "Grouped.Mean")
     res.mgr <- rbind(res.mgr,grouped)
-
+    res.mgr$group <- factor(res.mgr$group)
 
     p <- ggplot2::ggplot(data=res.mgr) +
       ggplot2::geom_line(data=res.mgr[res.mgr$group == "Grouped.Mean",],
@@ -201,7 +205,7 @@ makeLinePlot <- function(obj,
                           alpha=0.25,size=0.5,color="black") +
       ggplot2::facet_grid(~seqnames, scales = "free_x", space = "free_x", switch = 'x') +
       ggplot2::theme_classic() +
-      ggplot2::labs(x="",y="") +
+      ggplot2::labs(x="",y=ylab) +
       ggplot2::theme(panel.spacing = ggplot2::unit(0,"lines"))
   } else {
 
@@ -209,7 +213,7 @@ makeLinePlot <- function(obj,
       ggplot2::geom_line(ggplot2::aes(x=middle, y=moving.average, color=group)) +
       ggplot2::facet_grid(~seqnames, scales = 'free_x', space = 'free_x', switch = 'x') +
       ggplot2::theme_classic() +
-      ggplot2::labs(x="",y="") +
+      ggplot2::labs(x="",y=ylab,color=cluster.label) +
       ggplot2::theme(panel.spacing = ggplot2::unit(0, "lines"))
 
     if (!is.null(cluster.colors)) {
