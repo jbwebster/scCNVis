@@ -1,5 +1,32 @@
 
 
+#' Convert AtaCNV column names into a GRanges object
+#'
+#' This functions converts the column names provided by AtaCNV output into
+#' a GenomicRanges::GRanges object for use in creating a SCCNVis object.
+#' Adapted from Aelita-Stone/AtaCNV
+#'
+#' @param bin.names Character vector of column names from AtaCNV output.
+#' @return GenomicRanges::GRanges object
+#' @export
+ataCNVToGRanges <- function(bin.names) {
+  temp <- strsplit(bin.names, split = "_")
+  temp2 <- unlist(temp)
+  dim(temp2) <- c(3,length(temp2)/3)
+  bins <- data.frame(chr=temp2[1,],
+                     start=as.numeric(temp2[2,]),
+                     end=as.numeric(temp2[3,]),
+                     strand=rep("+",length(temp2[1,])))
+  g <- GenomicRanges::makeGRangesFromDataFrame(bins,
+                                               seqnames.field = "chr",
+                                               start.field = "start",
+                                               end.field = "end",
+                                               strand.field = "strand")
+  g <- .standardizeGRanges(g)
+  g
+}
+
+
 
 #' Create a SCCNVis object for plotting
 #'
