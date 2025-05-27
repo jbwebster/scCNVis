@@ -1,6 +1,6 @@
 
 
-.validObjectInputs <- function(input.matrix, cell.names, granges) {
+.validObjectInputs <- function(input.matrix, cell.names, granges, meta) {
   ####
   #Validate input.matrix
   if(is.null(input.matrix)) {
@@ -41,6 +41,23 @@
   if(length(granges) != ncol(input.matrix)) {
     stop("The length of granges should be the same as the number of columns in input.matrix")
   }
+
+  ###
+  #Validate metadata
+  if(!is.null(meta)) {
+    if(class(meta) != "data.frame") {
+      stop("If provided, metadata should be of class 'data.frame'")
+    }
+    if (nrow(meta) != nrow(input.matrix)) {
+      stop("If provided, metadata should have the same number of rows as the input matrix")
+    }
+    if (nrow(meta) != length(cell.names)) {
+      stop("If provided, metadata should have the same number of rows as the length of cell.names")
+    }
+    if (sum(!(rownames(meta) %in% cell.names)) > 0) {
+      stop("If provided, rownames of metadata should be cell.names")
+    }
+  }
 }
 
 
@@ -63,4 +80,17 @@
                  strand = BiocGenerics::strand(granges))
 
   out
+}
+
+.standardizeMeta <- function(meta, cell.names) {
+  if (is.null(meta)) {
+    meta <- data.frame(CellNames <- cell.names)
+    rownames(meta) <- cell.names
+    colnames(meta) <- "CellNames"
+    return(meta)
+  } else {
+    meta$CellNames <- cell.names
+    rownames(meta) <- cell.names
+    return(meta)
+  }
 }

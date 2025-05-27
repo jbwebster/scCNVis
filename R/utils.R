@@ -27,6 +27,64 @@ ataCNVToGRanges <- function(bin.names) {
 }
 
 
+#' Add a column to the metadata held in the SCCNVis object
+#'
+#' @param obj SCCNVis object to add metadata to
+#' @param meta Vector of values to be added to the metadata
+#' @param colname Name of new column to add to metadata
+#' @param cells Cells to add metadata to. If NULL, it is assumed that meta contains one value for each cell and is in the same order as the object's current metadata. If provided, it should be in the same order as meta. Default = NULL
+#' @return SCCNVis object with updated metadata
+#' @export
+addMetaData <- function(obj,meta,colname,cells=NULL) {
+  if (class(obj) != "SCCNVisObject") {
+    stop("obj is not a SCCNVisObject")
+  }
+
+  if (is.null(meta)) {
+    stop("meta value(s) cannot be missing")
+  }
+
+  if (is.null(colname)) {
+    stop("colname can not be NULL")
+  }
+
+  if(sum(cells %in% obj@Meta$CellNames) < length(cells)) {
+    stop("Not all provided cell names are in obj@Meta$CellNames")
+  }
+
+  if(sum(duplicated(cells)) > 0) {
+    stop("Duplicate cell names provided")
+  }
+
+  if (is.null(cells)) {
+    if (length(meta) != nrow(obj@Meta)) {
+      stop("Length of meta is expected to equal nrow(obj@Meta) when cells == NULL")
+    }
+    df <- data.frame(CellNames = obj@Meta$CellNames,
+                     X = meta)
+    colnames(df) <- c("CellNames", colname)
+    merged <- merge(obj@Meta, df, by="CellNames")
+    rownames(merged) <- merged$CellNames
+    merged <- merged[rownames(obj@Meta),]
+    obj@Meta <- merged
+    return(obj)
+  } else {
+    names(meta) <- cells
+
+    df <- data.frame(CellNames = obj@Meta$CellNames,
+                     X = rep(NA, nrow(obj@Meta)))
+    keys <- df[df$CellNames %in% cells,"CellNames"]
+    df[df$CellNames %in% cells,"X"] <- meta[keys]
+    colnames(df) <- c("CellNames",colname)
+    merged <- merge(obj@Meta, df, by="CellNames")
+    rownames(merged) <- merged$CellNames
+    merged <- merged[rownames(obj@Meta),]
+    obj@Meta <- merged
+    return(obj)
+
+  }
+}
+
 
 #' Create a SCCNVis object for plotting
 #'
@@ -38,10 +96,11 @@ ataCNVToGRanges <- function(bin.names) {
 #' @param input.matrix An input matrix of class 'matrix'
 #' @param cell.names A character vector containing unique cell names. Should be equal to the number of rows in input.matrix
 #' @param granges A GenomicRanges GRanges object, where each range in the object corresponds to a column in the input.matrix
+#' @param meta Data.frame of meta data. Rownames should be cell.names. Default = NULL
 #' @return A list object containing 2 elements ("Matrix" and "GRanges")
 #' @export
-createPlotObject <- function(input.matrix, cell.names, granges) {
-  .validObjectInputs(input.matrix, cell.names, granges)
+createPlotObject <- function(input.matrix, cell.names, granges, meta = NULL) {
+  .validObjectInputs(input.matrix, cell.names, granges, meta)
 
   ###
   #Handle input.matrix
@@ -59,9 +118,15 @@ createPlotObject <- function(input.matrix, cell.names, granges) {
   granges <- .standardizeGRanges(granges)
   granges$index <- c(1:length(granges))
 
+  ###
+  #Handle metadata
+  meta <- .standardizeMeta(meta, cell.names)
+
+
   out <- new("SCCNVisObject",
              Matrix = input.matrix,
-             GRanges = granges)
+             GRanges = granges,
+             Meta = meta)
 }
 
 
