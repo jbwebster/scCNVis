@@ -4,7 +4,7 @@
 \alias{createPlotObject}
 \title{Create a SCCNVis object for plotting}
 \usage{
-createPlotObject(input.matrix, cell.names, granges)
+createPlotObject(input.matrix, cell.names, granges, meta = NULL)
 }
 \arguments{
 \item{input.matrix}{An input matrix of class 'matrix'}
@@ -12,6 +12,8 @@ createPlotObject(input.matrix, cell.names, granges)
 \item{cell.names}{A character vector containing unique cell names. Should be equal to the number of rows in input.matrix}
 
 \item{granges}{A GenomicRanges GRanges object, where each range in the object corresponds to a column in the input.matrix}
+
+\item{meta}{Data.frame of meta data. Rownames should be cell.names. Default = NULL}
 }
 \value{
 A list object containing 2 elements ("Matrix" and "GRanges")

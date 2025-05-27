@@ -1,8 +1,8 @@
 ---
-title: "Example 1"
+title: "Heatmap Example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Example 1}
+  %\VignetteIndexEntry{HeatmapExample}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -37,14 +37,19 @@ print(cell.names[1:3])
 granges <- example.granges
 print(granges)
 
+#Example metadata data.frame object
+meta.df <- example.meta
+print(head(meta.df))
+
 #Create a SCCNVis object
-obj <- SCCNVis::createPlotObject(input.matrix, cell.names, granges)
+obj <- SCCNVis::createPlotObject(input.matrix, cell.names, granges, meta.df)
 ```
 
 
 The SCCNVis object is a simple object. It contains the input matrix (accessible
 as `obj@Matrix`) and the associated GenomicRanges::GRanges object (accessible as
-`obj@GRanges`). All plotting functions withing SCCNVis use this object as input.
+`obj@GRanges`). It also contains metadata associated with each cell, if provided.
+All plotting functions withing SCCNVis use this object as input.
 
 For example, a simple heatmap can be created using the following:
 
@@ -68,38 +73,27 @@ The expected output for the heatmap is also shown below.
 SCCNVis::saveCustomPlot(heatmap.result$Plot, "/path/to/heatmap.png")
 ```
 
-```{r pressure, echo=FALSE, fig.cap="Example 1a. Heatmap", out.width = '100%'}
+```{r echo=FALSE, fig.cap="Example 1a. Heatmap", out.width = '100%'}
 knitr::include_graphics("1a_heatmap.png")
 ```
 
-It is clear from the heatmap that this data has two primary subclones. A simple 
-way to identify these subclones is by using the plot data from the heatmap.
+The heatmap could be further customized if metadata has been provided. At the same
+time, we may choose to limit our plot to specific regions of interest. For this
+example, we may choose to focus only on chr7 and chrX, as seen below:
 
 ```{r}
-dend <- heatmap.result$PlotData$Clustering
-clusters <- stats::cutree(dend, k = 2)
-print(clusters[1:5])
+plot.regions <- example.granges[example.granges@seqnames == "chr7" |
+                                  example.granges@seqnames == "chrX",]
+
+heatmap.result <- SCCNVis::makeSCHeatmap(obj,
+                                         gr = plot.regions,
+                                         annotations = "Sample",
+                                         show.annotation.name = TRUE,
+                                         annotation.colors = list(
+                                           Sample = c("SampleA" = "red",
+                                                      "SampleB" = "blue")
+                                         ))
 ```
-
-One difference between these subclones was chrX. We could create a line plot
-to further observe the differences between these groups on that chromosome.
-I have added a few optional parameters, for additional customization. Note
-that the resulting `lineplot.result$Plot` is a ggplot object, which can be
-further modified by the user if desired.
-
-```{r}
-#Subset the example granges object down to only chrX
-chrx.granges <- granges[GenomicRanges::seqnames(granges)=="chrX"]
-lineplot.result <- SCCNVis::makeLinePlot(obj, gr = chrx.granges,
-                                         clusters = clusters,
-                                         show.x.ticks = TRUE,
-                                         ylab="Copy Ratio",
-                                         cluster.label = "Subclone")
-
-#Save the plot. Not running this here
-#SCCNVis::saveCustomPlot(lineplot.result$Plot, "lineplot.png")
-```
-
-```{r, echo=FALSE, fig.cap="Example 1b. Lineplot of chrX", out.width = '100%'}
-knitr::include_graphics("1b_lineplot.png")
+```{r pressure, echo=FALSE, fig.cap="Example 1b. Heatmap of chr7 and chrX, with sample annotation", out.width = '50%'}
+knitr::include_graphics("1b_heatmap.png")
 ```
