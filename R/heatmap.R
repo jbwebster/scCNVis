@@ -5,11 +5,12 @@
 #' @param obj A SCCNVisObject made using createPlotObject()
 #' @param gr A GenomicRanges:GRanges object of the regions to graph. If NULL, all regions will be plotted. Default = NULL
 #' @param annotations Column names from obj metadata to use for annotating cells on the left of the plot. Default = NULL
-#' @param annotation.colors
+#' @param annotation.colors Colors used in annotation. See heatmap vignette for example. Default = NULL
 #' @param group Name of metadata column. Signal will be averaged across all cells in each group. Default = NULL
 #' @param secondary.group Name of metadata column. Can be used to add a secondary annotation describing the composition of 'group'. Default = NULL
 #' @param show.annotation.name Show annotation names. Does nothing if annotations is NULL. Default == NULL
 #' @param add.noise Add minor noise to the data for clustering purposes. The visualization will not include the noise. Default = TRUE
+#' @param post.plot.mod.fun A function to apply to plot data before final plotting. Default == NULL
 #' @param heatmap.colors Named vector of numeric values. Names should be colors, values correspond to values in the heatmap. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL
 #' @param legend.title Title for the legend describing the heatmap. Often something like "log2(copy ratio)" or some other metric. Default = "Value"
 #' @param plot.title Plot title
@@ -24,6 +25,7 @@ makeSCHeatmap <- function(obj,
                           secondary.group = NULL,
                           show.annotation.name = FALSE,
                           add.noise = T,
+                          post.plot.mod.fun = NULL,
                           heatmap.colors = NULL,
                           legend.title = "Value",
                           plot.title = NULL,
@@ -249,10 +251,16 @@ makeSCHeatmap <- function(obj,
   }
 
 
+  ###
+  # Post group modification function, if any
+  if (!is.null(post.plot.mod.fun)) {
+    plot.data <- post.plot.mod.fun(plot.data)
+  }
 
   ###
   # Plotting
   .verboseLog(verbose, "Plotting")
+
 
   if(is.null(k)) {
     ht <- ComplexHeatmap::Heatmap(

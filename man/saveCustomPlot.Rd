@@ -4,11 +4,9 @@
 \alias{saveCustomPlot}
 \title{Helper function for saving a generated plot}
 \usage{
-saveCustomPlot(p, filename, width = 14, height = 7, format = "png")
+saveCustomPlot(obj, filename, width = 14, height = 7, format = "png")
 }
 \arguments{
-\item{p}{Plot object}
-
 \item{filename}{File path and filename for output}
 
 \item{width}{Width of plot, in inches}
@@ -16,6 +14,8 @@ saveCustomPlot(p, filename, width = 14, height = 7, format = "png")
 \item{height}{Height of plot, in inches}
 
 \item{format}{Format of output file. Should be "png" or "pdf"}
+
+\item{p}{Plot object}
 }
 \value{
 None

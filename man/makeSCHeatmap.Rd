@@ -9,10 +9,14 @@ makeSCHeatmap(
   gr = NULL,
   annotations = NULL,
   annotation.colors = NULL,
+  group = NULL,
+  secondary.group = NULL,
   show.annotation.name = FALSE,
   add.noise = T,
-  color.map = NULL,
+  post.plot.mod.fun = NULL,
+  heatmap.colors = NULL,
   legend.title = "Value",
+  plot.title = NULL,
   verbose = F
 )
 }
@@ -23,15 +27,25 @@ makeSCHeatmap(
 
 \item{annotations}{Column names from obj metadata to use for annotating cells on the left of the plot. Default = NULL}
 
-\item{show.annotation.name}{Show annotation names. Does nothing if annotations is NULL. Default == NULL.}
+\item{annotation.colors}{Colors used in annotation. See heatmap vignette for example. Default = NULL}
+
+\item{group}{Name of metadata column. Signal will be averaged across all cells in each group. Default = NULL}
+
+\item{secondary.group}{Name of metadata column. Can be used to add a secondary annotation describing the composition of 'group'. Default = NULL}
+
+\item{show.annotation.name}{Show annotation names. Does nothing if annotations is NULL. Default == NULL}
 
 \item{add.noise}{Add minor noise to the data for clustering purposes. The visualization will not include the noise. Default = TRUE}
 
+\item{post.plot.mod.fun}{A function to apply to plot data before final plotting. Default == NULL}
+
+\item{heatmap.colors}{Named vector of numeric values. Names should be colors, values correspond to values in the heatmap. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL}
+
 \item{legend.title}{Title for the legend describing the heatmap. Often something like "log2(copy ratio)" or some other metric. Default = "Value"}
 
-\item{verbose}{Verbose logging. Default = FALSE}
+\item{plot.title}{Plot title}
 
-\item{color.ramp}{A color ramp generated using circlize::colorRamp2. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL}
+\item{verbose}{Verbose logging. Default = FALSE}
 }
 \value{
 Returns a list containing a "Plot" (ComplexHeatmap) and "PlotData" (matrix)
