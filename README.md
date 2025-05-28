@@ -45,14 +45,14 @@ SCCNVis object, you need:
 You can start with the provided example data to get a sense of what these
 inputs look like:
 
-`
+```
 library(SCCNVis)
 input.matrix <- example.matrix
 cell.names <- example.cells
 granges <- example.granges
 meta <- example.meta
 obj <- SCCNVis::createPlotObject(input.matrix, cell.names, granges, meta)
-`
+```
 
 The resulting `obj` output can then be passed into any of the available plotting
 functions. For example:
