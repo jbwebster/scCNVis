@@ -28,21 +28,20 @@ library(SCCNVis)
 input.matrix <- example.matrix
 cell.names <- example.cells
 granges <- example.granges
-obj <- createPlotObject(input.matrix, cell.names, granges)
+meta <- example.meta
+obj <- createPlotObject(input.matrix, cell.names, granges, example.meta)
 `
 
 The resulting `obj` output can then be passed into any of the available plotting functions. For example:
 
 `
 heatmap.result <- makeSCHeatmap(obj)
-lineplot.result <- makeLinePlot(obj)
 `
 
 The output of the plotting functions is a list with two items. The first is the Plot (which can be accessed as heatmap.result$Plot) and the second is the data that was used to make the plot (accessed as heatmap.result$PlotData) in case you wish to create your own version of the plot or inspect the data more thoroughly. If you wish to simply export the plot, it can be done using the wrapper function:
 
 `
-saveCustomPlot(heatmap.result$Plot, "~/path/to/heatmap.png")
-saveCustomPlot(lineplot.result$Plot, "~/path/to/lineplot.png")
+saveCustomPlot(heatmap.result, "~/path/to/heatmap.png")
 `
 
 
