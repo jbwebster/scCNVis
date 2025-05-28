@@ -7,9 +7,10 @@
 #' @param annotations Column names from obj metadata to use for annotating cells on the left of the plot. Default = NULL
 #' @param annotation.colors
 #' @param group Name of metadata column. Signal will be averaged across all cells in each group. Default = NULL
+#' @param secondary.group Name of metadata column. Can be used to add a secondary annotation describing the composition of 'group'. Default = NULL
 #' @param show.annotation.name Show annotation names. Does nothing if annotations is NULL. Default == NULL
 #' @param add.noise Add minor noise to the data for clustering purposes. The visualization will not include the noise. Default = TRUE
-#' @param color.ramp A color ramp generated using circlize::colorRamp2. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL
+#' @param heatmap.colors Named vector of numeric values. Names should be colors, values correspond to values in the heatmap. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL
 #' @param legend.title Title for the legend describing the heatmap. Often something like "log2(copy ratio)" or some other metric. Default = "Value"
 #' @param verbose Verbose logging. Default = FALSE
 #' @return Returns a list containing a "Plot" (ComplexHeatmap) and "PlotData" (matrix)
@@ -19,9 +20,10 @@ makeSCHeatmap <- function(obj,
                           annotations = NULL,
                           annotation.colors = NULL,
                           group = NULL,
+                          secondary.group = NULL,
                           show.annotation.name = FALSE,
                           add.noise = T,
-                          color.map = NULL,
+                          heatmap.colors = NULL,
                           legend.title = "Value",
                           verbose = F) {
   .validateObject(obj)
@@ -70,8 +72,8 @@ makeSCHeatmap <- function(obj,
       groups <- groups[!is.na(groups)]
       k <- length(unique(groups))
       grouped.mat <- matrix(nrow = k, ncol = ncol(plot.data))
-      rownames(grouped.mat) <- unique(groups)
-      for (kc in unique(groups)) {
+      rownames(grouped.mat) <- unique(groups)[order(unique(groups))]
+      for (kc in order(unique(groups))) {
         grouped.mat[kc,] <- colMeans(plot.data[groups==kc,], na.rm = TRUE)
       }
       d <- parallelDist::parallelDist(grouped.mat)
@@ -88,17 +90,31 @@ makeSCHeatmap <- function(obj,
 
   ###
   # Color scheme
-  if(is.null(color.map)) {
+  if(is.null(heatmap.colors)) {
     .verboseLog(verbose,"Using default color scheme")
 
     quantiles <- quantile(plot.data, probs = c(0.01, 0.99))
 
     cl <- c("Blue","White","Red")
     color.map <- circlize::colorRamp2(
-      c(quantiles[1], median(plot.data), quantiles[2]),
+      c(round(quantiles[1],2), round(median(plot.data),2), round(quantiles[2],2)),
       cl
     )
+    heatmap.colors <- c(round(quantiles[1],2), round(median(plot.data),2), round(quantiles[2],2))
+    names(heatmap.colors) <- cl
+  } else {
+    color.map <- circlize::colorRamp2(
+      heatmap.colors,
+      names(heatmap.colors)
+    )
   }
+
+  #Make default legend using custom color map
+  default_legend <- ComplexHeatmap::Legend(
+    title = legend.title,
+    at = heatmap.colors,
+    col_fun = color.map
+  )
 
 
   ####
@@ -157,10 +173,10 @@ makeSCHeatmap <- function(obj,
   #Right side annotation, only used if k is not NULL
   if(!is.null(k)) {
     ncells <- summary(factor(groups))
-    ncells <- ncells[unique(groups)]
-
-    right.row.annot <- ComplexHeatmap::HeatmapAnnotation(
-      nCells = ComplexHeatmap::anno_barplot(ncells,
+    ncells <- ncells[rownames(plot.data)]
+    if(is.null(secondary.group)) {
+      right.row.annot <- ComplexHeatmap::HeatmapAnnotation(
+        nCells = ComplexHeatmap::anno_barplot(ncells,
                                             baseline = 0,
                                             add_numbers = TRUE,
                                             width = grid::unit(2, "cm"),
@@ -169,16 +185,67 @@ makeSCHeatmap <- function(obj,
                                               gp = grid::gpar(fontsize = 12),
                                               side = "top")
                                             ),
-      which = "row",
-      annotation_name_rot = 45,
-      annotation_label = c("# Cells"),
-      annotation_name_gp = grid::gpar(fontsize = 12),
-      annotation_name_side = "top"
+        which = "row",
+        annotation_name_rot = 45,
+        annotation_label = c("# Cells"),
+        annotation_name_gp = grid::gpar(fontsize = 12),
+        annotation_name_side = "top"
+        )
+      bar_legend <- NULL
+    } else if (secondary.group %in% colnames(obj@Meta)) {
+      secondary.groups <- unique(obj@Meta[,secondary.group])
+      prop.matrix <- matrix(rep(0, k* length(secondary.groups)),
+                            nrow = k,
+                            ncol = length(secondary.groups)
       )
+      colnames(prop.matrix) <- secondary.groups
+      rownames(prop.matrix) <- rownames(plot.data)
+      for (kc in rownames(prop.matrix)) {
+        curr.meta <- obj@Meta[obj@Meta[,group] == kc,]
+        total <- nrow(curr.meta)
+        for (curr.secondary in secondary.groups) {
+          curr.x <- curr.meta[curr.meta[,secondary.group] == curr.secondary,]
+          curr.n <- nrow(curr.x)
+          prop.matrix[kc,curr.secondary] <- curr.n / total
+        }
+      }
+      cl <- length(secondary.groups) + 2
+      right.row.annot <- ComplexHeatmap::HeatmapAnnotation(
+        nCells = ComplexHeatmap::anno_barplot(ncells,
+                                              baseline = 0,
+                                              add_numbers = TRUE,
+                                              width = grid::unit(2, "cm"),
+                                              gp = grid::gpar(fill = 2, fontsize = 12),
+                                              axis_param = list(
+                                                gp = grid::gpar(fontsize = 12),
+                                                side = "top")
+        ),
+        SecondaryGroup = ComplexHeatmap::anno_barplot(prop.matrix,
+                                                      width = grid::unit(2,"cm"),
+                                                      gp = grid::gpar(fill = 3:cl, fontsize=12),
+                                                      axis_param = list(
+                                                        grid::gpar(fontsize = 12),
+                                                        side = "top"
+                                                      )),
+        which = "row",
+        annotation_name_rot = 45,
+        annotation_label = c("# Cells", secondary.group),
+        annotation_name_gp = grid::gpar(fontsize = 12),
+        annotation_name_side = "top"
+      )
+
+      bar_legend <- ComplexHeatmap::Legend(
+        labels = colnames(prop.matrix),
+        title = secondary.group,
+        legend_gp = grid::gpar(fill=3:cl)
+      )
+    }
 
   } else {
     right.row.annot <- NULL
+    bar_legend <- NULL
   }
+
 
 
   ###
@@ -208,6 +275,7 @@ makeSCHeatmap <- function(obj,
       plot.data,
       name = legend.title,
       col = color.map,
+      cluster_rows = FALSE,
       row_split = new.kclusters,
       border = TRUE,
       row_title = NULL,
@@ -215,7 +283,7 @@ makeSCHeatmap <- function(obj,
       left_annotation = row.annot,
       right_annotation = right.row.annot,
       top_annotation = col.annot,
-      show_row_names = TRUE,
+      show_row_names = FALSE,
       show_column_names = FALSE,
       show_row_dend = FALSE,
       column_split = col.split,
@@ -225,9 +293,14 @@ makeSCHeatmap <- function(obj,
       use_raster = FALSE
     )
   }
+  if(is.null(bar_legend)) {
+    legend.list <- list(default_legend)
+  } else {
+    legend.list <- list(default_legend, bar_legend)
+  }
 
 
-  return(list("Plot" = ht, "PlotData" = list("PlotData" = plot.data, "Clustering" = hc_re)))
+  return(list("Plot" = ht, "PlotData" = list("PlotData" = plot.data, "Clustering" = hc_re, "Legend" = legend.list)))
 
 }
 

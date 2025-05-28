@@ -146,7 +146,8 @@ createPlotObject <- function(input.matrix, cell.names, granges, meta) {
 #' @param format Format of output file. Should be "png" or "pdf"
 #' @return None
 #' @export
-saveCustomPlot <- function(p, filename, width = 14, height = 7, format = "png") {
+saveCustomPlot <- function(obj, filename, width = 14, height = 7, format = "png") {
+  p <- obj$Plot
   if (format != "png" & format != "pdf") {
     stop("format must == 'png' or 'pdf'")
   }
@@ -167,7 +168,9 @@ saveCustomPlot <- function(p, filename, width = 14, height = 7, format = "png") 
   else if(class(p) == "Heatmap") {
     if (format == "png") {
       png(filename, width = width, height = height, units = "in", res = 1000)
-      ComplexHeatmap::draw(p)
+      ComplexHeatmap::draw(p,
+                           show_heatmap_legend = FALSE,
+                           annotation_legend_list = obj$PlotData$Legend)
       dev.off()
     }
     if (format == "pdf") {

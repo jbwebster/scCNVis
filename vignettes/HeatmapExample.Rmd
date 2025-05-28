@@ -64,7 +64,8 @@ print(names(heatmap.result$PlotData))
 As you can see, the result is a list object that contains the `Plot`, which is
 a `ComplexHeatmap` object, and the `PlotData`. In this case, the `PlotData`
 is a list containing the actual PlotData (a matrix for the heatmap) and a clustering
-result, which relates to the row ordering in the heatmap. These values can be used
+result, which relates to the row ordering in the heatmap. In this case, it also
+includes the information for drawing the legend of the plot. These values can be used
 to create other version of the plot using other packages, or be saved for downstream 
 analysis. 
 
@@ -72,7 +73,15 @@ The resulting file can be saved however you would normally export a `ComplexHeat
 For convenience, it can be saved using the SCCNVis wrapper function for exporting plots.
 The expected output for the heatmap is also shown below.
 ```{r eval=FALSE}
-SCCNVis::saveCustomPlot(heatmap.result$Plot, "/path/to/heatmap.png")
+#Example manual method
+#png("output/file.png", width=2000, height=500)
+#ComplexHeatmap::draw(heatmap.result$Plot,
+#     show_heatmap_legend = FALSE,
+#     annotation_legend_list = heatmap.result$PlotData$Legend)
+#dev.off()
+
+#Simple wrapper for convenience
+SCCNVis::saveCustomPlot(heatmap.result, "/path/to/heatmap.png")
 ```
 
 ```{r echo=FALSE, fig.cap="Example 1a. Heatmap", out.width = '100%'}
@@ -100,7 +109,8 @@ heatmap.result <- SCCNVis::makeSCHeatmap(obj,
 knitr::include_graphics("1b_heatmap.png")
 ```
 
-We can see that there are at least 2 seemingly distinct clusters present in our heatmap. To simplify our heatmap, we may wish to present the data as a simple 
+We can see that there are at least 2 seemingly distinct clusters present in our heatmap. 
+To simplify our heatmap, we may wish to present the data as a simple 
 average of those groups. To do so, we must add metadata to the SCCNVis object
 to assign each cell to a group, then tell the makeSCHeatmap function which 
 metadata column to group the cells by. Whenever the heatmap is the result of
@@ -127,7 +137,9 @@ knitr::include_graphics("1c_heatmap.png")
 Alternatively, you may create groups using any other method you choose, such
 as sample of origin, phenotype data, or dynamic clusters. In this example,
 I use the dynamicTreeCut package to dynamically cluster the cells and group
-the heatmap using the resulting clusters:
+the heatmap using the resulting clusters. I am interested in what proportion
+of each dynamic cluster comes from each sample, so I set the `secondary.group`
+as the `Sample` metadata column
 
 ```{r}
 dynamic.kclusters <- dynamicTreeCut::cutreeDynamic(dendro = hc_re, 
@@ -139,7 +151,8 @@ names(dynamic.kclusters) <- hc_re$labels
 obj <- SCCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
 
 heatmap.result <- SCCNVis::makeSCHeatmap(obj,
-                                         group = "DynamicKClusters")
+                                         group = "DynamicKClusters",
+                                         secondary.group = "Sample")
 ```
 ```{r echo=FALSE, fig.cap="Example 1d. Heatmap with dynamic clusters", out.width = '100%'}
 knitr::include_graphics("1d_heatmap.png")
