@@ -12,6 +12,7 @@
 #' @param add.noise Add minor noise to the data for clustering purposes. The visualization will not include the noise. Default = TRUE
 #' @param heatmap.colors Named vector of numeric values. Names should be colors, values correspond to values in the heatmap. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL
 #' @param legend.title Title for the legend describing the heatmap. Often something like "log2(copy ratio)" or some other metric. Default = "Value"
+#' @param plot.title Plot title
 #' @param verbose Verbose logging. Default = FALSE
 #' @return Returns a list containing a "Plot" (ComplexHeatmap) and "PlotData" (matrix)
 #' @export
@@ -25,6 +26,7 @@ makeSCHeatmap <- function(obj,
                           add.noise = T,
                           heatmap.colors = NULL,
                           legend.title = "Value",
+                          plot.title = NULL,
                           verbose = F) {
   .validateObject(obj)
 
@@ -300,7 +302,8 @@ makeSCHeatmap <- function(obj,
   }
 
 
-  return(list("Plot" = ht, "PlotData" = list("PlotData" = plot.data, "Clustering" = hc_re, "Legend" = legend.list)))
+  return(list("Plot" = ht,
+              "PlotData" = list("PlotData" = plot.data, "Clustering" = hc_re, "Legend" = legend.list, "Title" = plot.title)))
 
 }
 

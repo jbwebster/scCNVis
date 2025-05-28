@@ -170,7 +170,8 @@ saveCustomPlot <- function(obj, filename, width = 14, height = 7, format = "png"
       png(filename, width = width, height = height, units = "in", res = 1000)
       ComplexHeatmap::draw(p,
                            show_heatmap_legend = FALSE,
-                           annotation_legend_list = obj$PlotData$Legend)
+                           annotation_legend_list = obj$PlotData$Legend,
+                           column_title = obj$PlotData$Title)
       dev.off()
     }
     if (format == "pdf") {
