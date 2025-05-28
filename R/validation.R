@@ -46,16 +46,19 @@
   #Validate metadata
   if(!is.null(meta)) {
     if(class(meta) != "data.frame") {
-      stop("If provided, metadata should be of class 'data.frame'")
+      stop("metadata should be of class 'data.frame'")
     }
     if (nrow(meta) != nrow(input.matrix)) {
-      stop("If provided, metadata should have the same number of rows as the input matrix")
+      stop("metadata should have the same number of rows as the input matrix")
     }
     if (nrow(meta) != length(cell.names)) {
-      stop("If provided, metadata should have the same number of rows as the length of cell.names")
+      stop("metadata should have the same number of rows as the length of cell.names")
     }
     if (sum(!(rownames(meta) %in% cell.names)) > 0) {
-      stop("If provided, rownames of metadata should be cell.names")
+      stop("rownames of metadata should be cell.names")
+    }
+    if (!("Sample" %in% colnames(meta))) {
+      stop("meta must have a column named 'Sample'")
     }
   }
 }
@@ -84,10 +87,7 @@
 
 .standardizeMeta <- function(meta, cell.names) {
   if (is.null(meta)) {
-    meta <- data.frame(CellNames <- cell.names)
-    rownames(meta) <- cell.names
-    colnames(meta) <- "CellNames"
-    return(meta)
+    stop("meta cannot be missing")
   } else {
     meta$CellNames <- cell.names
     rownames(meta) <- cell.names

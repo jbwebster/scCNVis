@@ -96,10 +96,10 @@ addMetaData <- function(obj,meta,colname,cells=NULL) {
 #' @param input.matrix An input matrix of class 'matrix'
 #' @param cell.names A character vector containing unique cell names. Should be equal to the number of rows in input.matrix
 #' @param granges A GenomicRanges GRanges object, where each range in the object corresponds to a column in the input.matrix
-#' @param meta Data.frame of meta data. Rownames should be cell.names. Default = NULL
+#' @param meta Data.frame of meta data. Rownames should be cell.names. At a minimum, it must include a "Sample" column.
 #' @return A list object containing 2 elements ("Matrix" and "GRanges")
 #' @export
-createPlotObject <- function(input.matrix, cell.names, granges, meta = NULL) {
+createPlotObject <- function(input.matrix, cell.names, granges, meta) {
   .validObjectInputs(input.matrix, cell.names, granges, meta)
 
   ###

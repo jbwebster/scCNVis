@@ -24,6 +24,8 @@ and that the length of `granges` is equal to the number of columns in the
 ```{r setup}
 library(SCCNVis)
 
+set.seed(42)
+
 #Example input matrix
 input.matrix <- example.matrix
 print(dim(input.matrix))
@@ -94,6 +96,51 @@ heatmap.result <- SCCNVis::makeSCHeatmap(obj,
                                                       "SampleB" = "blue")
                                          ))
 ```
-```{r pressure, echo=FALSE, fig.cap="Example 1b. Heatmap of chr7 and chrX, with sample annotation", out.width = '50%'}
+```{r echo=FALSE, fig.cap="Example 1b. Heatmap of chr7 and chrX, with sample annotation", out.width = '50%'}
 knitr::include_graphics("1b_heatmap.png")
+```
+
+We can see that there are at least 2 seemingly distinct clusters present in our heatmap. To simplify our heatmap, we may wish to present the data as a simple 
+average of those groups. To do so, we must add metadata to the SCCNVis object
+to assign each cell to a group, then tell the makeSCHeatmap function which 
+metadata column to group the cells by. Whenever the heatmap is the result of
+grouped data, the right side of the plot will show the number of cells 
+described by each group.
+
+```{r}
+#Calculate distance matrix values
+dist <- parallelDist::parallelDist(obj@Matrix)
+#Perform hierarchical clustering
+hc_re <- hclust(dist, method="ward.D2")
+#Split the hierarchical clustering into two groups
+kclusters <- cutree(hc_re, k = 2)
+obj <- SCCNVis::addMetaData(obj, kclusters, colname = "KClusters")
+
+
+heatmap.result <- SCCNVis::makeSCHeatmap(obj,
+                                         group = "KClusters")
+```
+```{r echo=FALSE, fig.cap="Example 1c. Heatmap with pre-specified clusters", out.width = '100%'}
+knitr::include_graphics("1c_heatmap.png")
+```
+
+Alternatively, you may create groups using any other method you choose, such
+as sample of origin, phenotype data, or dynamic clusters. In this example,
+I use the dynamicTreeCut package to dynamically cluster the cells and group
+the heatmap using the resulting clusters:
+
+```{r}
+dynamic.kclusters <- dynamicTreeCut::cutreeDynamic(dendro = hc_re, 
+                                                   distM = as.matrix(dist),
+                                                   deepSplit = 0,
+                                                   pamRespectsDendro = TRUE
+                                                   )
+names(dynamic.kclusters) <- hc_re$labels
+obj <- SCCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
+
+heatmap.result <- SCCNVis::makeSCHeatmap(obj,
+                                         group = "DynamicKClusters")
+```
+```{r echo=FALSE, fig.cap="Example 1d. Heatmap with dynamic clusters", out.width = '100%'}
+knitr::include_graphics("1d_heatmap.png")
 ```

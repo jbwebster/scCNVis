@@ -5,7 +5,9 @@
 #' @param obj A SCCNVisObject made using createPlotObject()
 #' @param gr A GenomicRanges:GRanges object of the regions to graph. If NULL, all regions will be plotted. Default = NULL
 #' @param annotations Column names from obj metadata to use for annotating cells on the left of the plot. Default = NULL
-#' @param show.annotation.name Show annotation names. Does nothing if annotations is NULL. Default == NULL.
+#' @param annotation.colors
+#' @param group Name of metadata column. Signal will be averaged across all cells in each group. Default = NULL
+#' @param show.annotation.name Show annotation names. Does nothing if annotations is NULL. Default == NULL
 #' @param add.noise Add minor noise to the data for clustering purposes. The visualization will not include the noise. Default = TRUE
 #' @param color.ramp A color ramp generated using circlize::colorRamp2. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL
 #' @param legend.title Title for the legend describing the heatmap. Often something like "log2(copy ratio)" or some other metric. Default = "Value"
@@ -16,6 +18,7 @@ makeSCHeatmap <- function(obj,
                           gr = NULL,
                           annotations = NULL,
                           annotation.colors = NULL,
+                          group = NULL,
                           show.annotation.name = FALSE,
                           add.noise = T,
                           color.map = NULL,
@@ -59,6 +62,31 @@ makeSCHeatmap <- function(obj,
   hc_re <- hclust(d, method="ward.D2")
 
   ###
+  # Calculate group averages, if desired
+  if(!is.null(group)) {
+    if(group %in% colnames(obj@Meta)) {
+      groups <- obj@Meta[,group]
+      names(groups) <- rownames(obj@Meta)
+      groups <- groups[!is.na(groups)]
+      k <- length(unique(groups))
+      grouped.mat <- matrix(nrow = k, ncol = ncol(plot.data))
+      rownames(grouped.mat) <- unique(groups)
+      for (kc in unique(groups)) {
+        grouped.mat[kc,] <- colMeans(plot.data[groups==kc,], na.rm = TRUE)
+      }
+      d <- parallelDist::parallelDist(grouped.mat)
+      hc_re <- hclust(d, method="ward.D2")
+      new.kclusters <- cutree(hc_re, k)
+      plot.data <- grouped.mat
+    } else {
+      stop("group must be a column name in obj@Meta")
+    }
+  } else {
+    k <- NULL
+  }
+
+
+  ###
   # Color scheme
   if(is.null(color.map)) {
     .verboseLog(verbose,"Using default color scheme")
@@ -72,9 +100,11 @@ makeSCHeatmap <- function(obj,
     )
   }
 
+
   ####
   #Column annotation and splitting
   .verboseLog(verbose,"Creating column annotation")
+
 
   #TODO: May cause odd behavior if granges are unsorted
   n.chr <- length(unique(GenomeInfoDb::seqnames(plot.granges)))
@@ -90,7 +120,8 @@ makeSCHeatmap <- function(obj,
 
 
   #Annotation
-  if(!is.null(annotations)) {
+  .verboseLog(verbose,"Creating left-side annotation, if any")
+  if(!is.null(annotations) & is.null(k)) {
     if (sum(annotations %in% colnames(obj@Meta)) == length(annotations)) {
       annotation_list <- list()
       for (annot in annotations) {
@@ -112,8 +143,41 @@ makeSCHeatmap <- function(obj,
       row.annot <- do.call(ComplexHeatmap::HeatmapAnnotation, args)
 
     }
+  } else if(!is.null(k)) {
+    max.color <- 2 + k
+    row.annot <- ComplexHeatmap::HeatmapAnnotation(
+      Subclone = ComplexHeatmap::anno_block(gp = grid::gpar(fill = 3:max.color),
+                            labels = rownames(plot.data)),
+      which = "row"
+    )
   } else {
     row.annot <- NULL
+  }
+
+  #Right side annotation, only used if k is not NULL
+  if(!is.null(k)) {
+    ncells <- summary(factor(groups))
+    ncells <- ncells[unique(groups)]
+
+    right.row.annot <- ComplexHeatmap::HeatmapAnnotation(
+      nCells = ComplexHeatmap::anno_barplot(ncells,
+                                            baseline = 0,
+                                            add_numbers = TRUE,
+                                            width = grid::unit(2, "cm"),
+                                            gp = grid::gpar(fill = 2, fontsize = 12),
+                                            axis_param = list(
+                                              gp = grid::gpar(fontsize = 12),
+                                              side = "top")
+                                            ),
+      which = "row",
+      annotation_name_rot = 45,
+      annotation_label = c("# Cells"),
+      annotation_name_gp = grid::gpar(fontsize = 12),
+      annotation_name_side = "top"
+      )
+
+  } else {
+    right.row.annot <- NULL
   }
 
 
@@ -121,23 +185,47 @@ makeSCHeatmap <- function(obj,
   # Plotting
   .verboseLog(verbose, "Plotting")
 
-  ht <- ComplexHeatmap::Heatmap(
-    plot.data,
-    name = legend.title,
-    col = color.map,
-    cluster_rows = hc_re,
-    cluster_columns = FALSE,
-    left_annotation = row.annot,
-    top_annotation = col.annot,
-    show_row_names = FALSE,
-    show_column_names = FALSE,
-    show_row_dend = FALSE,
-    column_split = col.split,
-    column_title = NULL,
-    cluster_column_slices = FALSE,
-    show_column_dend = FALSE,
-    use_raster = FALSE
-  )
+  if(is.null(k)) {
+    ht <- ComplexHeatmap::Heatmap(
+      plot.data,
+      name = legend.title,
+      col = color.map,
+      cluster_rows = hc_re,
+      cluster_columns = FALSE,
+      left_annotation = row.annot,
+      top_annotation = col.annot,
+      show_row_names = FALSE,
+      show_column_names = FALSE,
+      show_row_dend = FALSE,
+      column_split = col.split,
+      column_title = NULL,
+      cluster_column_slices = FALSE,
+      show_column_dend = FALSE,
+      use_raster = FALSE
+    )
+  } else {
+    ht <- ComplexHeatmap::Heatmap(
+      plot.data,
+      name = legend.title,
+      col = color.map,
+      row_split = new.kclusters,
+      border = TRUE,
+      row_title = NULL,
+      cluster_columns = FALSE,
+      left_annotation = row.annot,
+      right_annotation = right.row.annot,
+      top_annotation = col.annot,
+      show_row_names = TRUE,
+      show_column_names = FALSE,
+      show_row_dend = FALSE,
+      column_split = col.split,
+      column_title = NULL,
+      cluster_column_slices = FALSE,
+      show_column_dend = FALSE,
+      use_raster = FALSE
+    )
+  }
+
 
   return(list("Plot" = ht, "PlotData" = list("PlotData" = plot.data, "Clustering" = hc_re)))
 
