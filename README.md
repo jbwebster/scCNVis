@@ -14,6 +14,8 @@ gain novel biological insights.
 
 Developed by Jace Webster while working in the lab of David Quigley at UCSF.
 
+View the [full documenation here](https://jbwebster.github.io/SCCNVis/)
+
 ## Installation
 ```
 devtools::install_github("jbwebster/SCCNVis")
@@ -33,7 +35,7 @@ BiocManager::install("GenomicRanges")
 ## Tutorial
 
 A high-level overview of how the package works is outlined below. 
-More in-depth examples can be found in HERE.
+More in-depth examples and documentation can be found [here](https://jbwebster.github.io/SCCNVis/)
 
 SCCNVis works with SCCNVis objects. This provides a common format that can be
 created using the outputs from any of the common CNV callers. To create a 
