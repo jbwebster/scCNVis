@@ -139,7 +139,14 @@ as sample of origin, phenotype data, or dynamic clusters. In this example,
 I use the dynamicTreeCut package to dynamically cluster the cells and group
 the heatmap using the resulting clusters. I am interested in what proportion
 of each dynamic cluster comes from each sample, so I set the `secondary.group`
-as the `Sample` metadata column
+as the `Sample` metadata column.
+
+`makeSCHeatmap()` also accepts custom functions that can be applied to the plot
+data. The custom function should accept an input `data.frame` and return a
+`data.frame` with the same dimensions and the same row/column order. Column names
+and row names should not be altered. For visual clarity, let's add a function
+that changes all values within 1 standard deviation of the mean to be the mean,
+so we can focus on whatever strong signals may be present in our data.
 
 ```{r}
 dynamic.kclusters <- dynamicTreeCut::cutreeDynamic(dendro = hc_re, 
@@ -150,9 +157,18 @@ dynamic.kclusters <- dynamicTreeCut::cutreeDynamic(dendro = hc_re,
 names(dynamic.kclusters) <- hc_re$labels
 obj <- SCCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
 
+custom.func <- function(data) {
+  sd.value <- sd(data, na.rm = TRUE)
+  mean.value <- mean(data, na.rm = TRUE)
+  data[data > mean.value - sd.value & data < mean.value + sd.value] <- mean.value
+  return(data)
+}
+
+
 heatmap.result <- SCCNVis::makeSCHeatmap(obj,
                                          group = "DynamicKClusters",
-                                         secondary.group = "Sample")
+                                         secondary.group = "Sample",
+                                         post.plot.mod.fun = custom.func)
 ```
 ```{r echo=FALSE, fig.cap="Example 1d. Heatmap with dynamic clusters", out.width = '100%'}
 knitr::include_graphics("1d_heatmap.png")

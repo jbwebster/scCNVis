@@ -77,8 +77,11 @@ makeSCHeatmap <- function(obj,
       k <- length(unique(groups))
       grouped.mat <- matrix(nrow = k, ncol = ncol(plot.data))
       rownames(grouped.mat) <- unique(groups)[order(unique(groups))]
-      for (kc in order(unique(groups))) {
-        grouped.mat[kc,] <- colMeans(plot.data[groups==kc,], na.rm = TRUE)
+      #Using an index i instead of by name, in case groups are numeric
+      i <- 1
+      for (kc in unique(groups)[order(unique(groups))]) {
+        grouped.mat[i,] <- colMeans(plot.data[groups==kc,], na.rm = TRUE)
+        i <- i + 1
       }
       d <- parallelDist::parallelDist(grouped.mat)
       hc_re <- hclust(d, method="ward.D2")

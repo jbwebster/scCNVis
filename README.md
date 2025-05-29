@@ -25,7 +25,7 @@ install those dependencies by doing the following:
 if (!require("BiocManager", quietly = TRUE) )
 	install.packages("BiocManager")
 BiocManager::install("ComplexHeatmap")
-BiocManager:;install("GenomicRanges")
+BiocManager::install("GenomicRanges")
 ```
 
 ## Tutorial

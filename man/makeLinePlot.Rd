@@ -8,13 +8,14 @@ makeLinePlot(
   obj,
   gr = NULL,
   window.size = 5,
-  clusters = NULL,
-  cluster.colors = NULL,
-  cluster.label = "",
-  plot.average.of.clusters = FALSE,
+  group = NULL,
+  group.colors = NULL,
+  group.label = "",
+  plot.average.of.groups = FALSE,
   avg.color = "red",
   show.x.ticks = FALSE,
   ylab = "",
+  remove.chr.prefix = TRUE,
   verbose = F
 )
 }
@@ -25,19 +26,19 @@ makeLinePlot(
 
 \item{window.size}{Window size for moving average calculation}
 
-\item{clusters}{Named character vector specifying clusters for cells. names(clusters) should give a list of cells to plot, and can be used to plot a subset of the data. Values are cluster names. Default = NULL}
+\item{group}{Name of metadata column to group lines by. Default = NULL}
 
-\item{cluster.colors}{Named character vector. Names should the cluster names, values are the colors. Default = NULL}
+\item{group.colors}{Named character vector. Names should be the values in the column specified by 'group', values are the colors. Default = NULL}
 
-\item{cluster.label}{Character. If clusters are provided, this is used as the title of the legend. Not used if plot.average.of.clusters == TRUE. Default = ""}
-
-\item{plot.average.of.clusters}{Logical. If TRUE, plot each cluster individually and an additional line representing the average of each cluster. Default = FALSE}
+\item{plot.average.of.groups}{Logical. If TRUE, plot each cluster individually and an additional line representing the average of each cluster. Default = FALSE}
 
 \item{avg.color}{Color. Used for the color of the cluster average, if plot.average.of.clusters == T. Default = 'red'}
 
 \item{show.x.ticks}{Logical. If TRUE, show tick marks on X axis. Only recommended when showing smaller regions. Default = FALSE}
 
 \item{ylab}{Character. Label of y axis. Default = ""}
+
+\item{remove.chr.prefix}{Remove 'chr' prefix of chromosome names. Default = TRUE}
 
 \item{verbose}{Verbose logging. Default = FALSE}
 }
