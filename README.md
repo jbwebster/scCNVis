@@ -34,8 +34,7 @@ BiocManager::install("GenomicRanges")
 
 ## Tutorial
 
-A high-level overview of how the package works is outlined below. 
-More in-depth examples and documentation can be found [here](https://jbwebster.github.io/SCCNVis/)
+A high-level overview of how the package works is outlined below.
 
 SCCNVis works with SCCNVis objects. This provides a common format that can be
 created using the outputs from any of the common CNV callers. To create a 
