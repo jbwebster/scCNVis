@@ -12,6 +12,8 @@ the basic plotting methods of those tools are insufficient. This package
 contains helper functions to support exploration of copy number data and
 gain novel biological insights.
 
+Developed by Jace Webster while working in the lab of David Quigley at UCSF.
+
 ## Installation
 ```
 devtools::install_github("jbwebster/SCCNVis")
