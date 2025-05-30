@@ -2,10 +2,9 @@ Package: SCCNVis
 Title: Single-cell copy number visualizations
 Version: 0.0.0.1
 Authors@R: 
-    c(person("Jace", "Webster", "jace.webster@ucsf.edu", role = c("aut", "cre"),
+    c(person(given = "Jace", family = "Webster", email = "jace.webster@ucsf.edu", role = c("aut", "cre"),
 		comment = c(ORCID = "0000-0002-9396-5658")))
 Author: Jace Webster [aut, cre]
-Maintainer: Jace Webster <jace.webster@ucsf.edu>
 Description: Basic visualiation of copy number calls generated from single-cell analyses.
 License: MIT + file LICENSE
 Encoding: UTF-8
