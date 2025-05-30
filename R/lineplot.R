@@ -107,12 +107,12 @@ makeLinePlot <- function(obj,
     res.mgr$group <- factor(res.mgr$group)
 
     p <- ggplot2::ggplot(data=res.mgr) +
-      ggplot2::geom_line(data=res.mgr[res.mgr$group == "Grouped.Mean",],
-                         ggplot2::aes(x=middle,y=moving.average,group=group),
-                         alpha=1,size=2,color=avg.color) +
       ggplot2::geom_line(data=res.mgr[res.mgr$group != "Grouped.Mean",],
                          ggplot2::aes(x=middle,y=moving.average,group=group),
                          alpha=0.25,size=0.5,color="black") +
+      ggplot2::geom_line(data=res.mgr[res.mgr$group == "Grouped.Mean",],
+                         ggplot2::aes(x=middle,y=moving.average,group=group),
+                         alpha=1,size=2,color=avg.color) +
       ggplot2::facet_grid(~seqnames, scales = "free_x", space = "free_x") +
       ggplot2::theme_classic() +
       ggplot2::labs(x="",y=ylab) +
