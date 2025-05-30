@@ -167,14 +167,36 @@ saveCustomPlot <- function(obj, filename, width = 14, height = 7, format = "png"
   }
   else if(class(p) == "Heatmap") {
     if (format == "png") {
-      png(filename, width = width, height = height, units = "in", res = 1000)
-      ComplexHeatmap::draw(p,
-                           show_heatmap_legend = FALSE,
-                           annotation_legend_list = obj$PlotData$Legend,
-                           column_title = obj$PlotData$Title)
-      dev.off()
+
+      if(length(heatmap.result$PlotData$Legend) == 2) {
+        png(filename, width = width, height = height, units = "in", res = 1000)
+        ComplexHeatmap::draw(p,
+                             show_heatmap_legend = FALSE,
+                             annotation_legend_list = obj$PlotData$Legend,
+                             column_title = obj$PlotData$Title)
+        dev.off()
+      } else {
+        png(filename, width = width, height = height, units = "in", res = 1000)
+        ComplexHeatmap::draw(p,
+                             column_title = obj$PlotData$Title)
+        dev.off()
+      }
+
     }
     if (format == "pdf") {
+      if(length(heatmap.result$PlotData$Legend) == 2) {
+        pdf(filename, width = width, height = height)
+        ComplexHeatmap::draw(p,
+                             show_heatmap_legend = FALSE,
+                             annotation_legend_list = obj$PlotData$Legend,
+                             column_title = obj$PlotData$Title)
+        dev.off()
+      } else {
+        pdf(filename, width = width, height = height)
+        ComplexHeatmap::draw(p,
+                             column_title = obj$PlotData$Title)
+        dev.off()
+      }
       pdf(filename, width = width, height = height)
       ComplexHeatmap::draw(p)
       dev.off()

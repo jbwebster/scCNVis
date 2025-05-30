@@ -186,14 +186,15 @@ chr7 and chrX, as seen below:</p>
 <code class="sourceCode R"><span><span class="va">plot.regions</span> <span class="op">&lt;-</span> <span class="va">example.granges</span><span class="op">[</span><span class="va">example.granges</span><span class="op">@</span><span class="va">seqnames</span> <span class="op">==</span> <span class="st">"chr7"</span> <span class="op">|</span></span>
 <span>                                  <span class="va">example.granges</span><span class="op">@</span><span class="va">seqnames</span> <span class="op">==</span> <span class="st">"chrX"</span>,<span class="op">]</span></span>
 <span></span>
+<span><span class="co">#If using a basic annotation as shown here and you want to specify colors,</span></span>
+<span><span class="co">#it should be provided as a named list</span></span>
+<span><span class="va">annotation.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleA"</span> <span class="op">=</span> <span class="st">"red"</span>, <span class="st">"SampleB"</span> <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                         gr <span class="op">=</span> <span class="va">plot.regions</span>,</span>
 <span>                                         annotations <span class="op">=</span> <span class="st">"Sample"</span>,</span>
 <span>                                         show.annotation.name <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                                         annotation.colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>                                           Sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleA"</span> <span class="op">=</span> <span class="st">"red"</span>,</span>
-<span>                                                      <span class="st">"SampleB"</span> <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span>
-<span>                                         <span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>                                         annotation.colors <span class="op">=</span> <span class="va">annotation.colors</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="1b_heatmap.png" alt="Example 1b. Heatmap of chr7 and chrX, with sample annotation" width="50%"><p class="caption">
 Example 1b. Heatmap of chr7 and chrX, with sample annotation
@@ -215,9 +216,13 @@ the plot will show the number of cells described by each group.</p>
 <span><span class="va">kclusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cutree.html" class="external-link">cutree</a></span><span class="op">(</span><span class="va">hc_re</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">kclusters</span>, colname <span class="op">=</span> <span class="st">"KClusters"</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co">#If using a grouping method, the way to supply annotation colors changes.</span></span>
+<span><span class="co">#In this case, they can simply be supplied as a character vector</span></span>
+<span><span class="va">annotation.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"yellow"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
-<span>                                         group <span class="op">=</span> <span class="st">"KClusters"</span><span class="op">)</span></span></code></pre></div>
+<span>                                         group <span class="op">=</span> <span class="st">"KClusters"</span>,</span>
+<span>                                         annotation.colors <span class="op">=</span> <span class="va">annotation.colors</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="1c_heatmap.png" alt="Example 1c. Heatmap with pre-specified clusters" width="100%"><p class="caption">
 Example 1c. Heatmap with pre-specified clusters

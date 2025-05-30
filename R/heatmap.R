@@ -49,6 +49,8 @@ makeSCHeatmap <- function(obj,
     .verboseLog(verbose, paste0("Genomic bins remaining: ", ncol(plot.data)))
   }
 
+  bar_legend <- NULL
+
   ###
   # Add noise
   cluster.data <- plot.data
@@ -70,6 +72,9 @@ makeSCHeatmap <- function(obj,
   ###
   # Calculate group averages, if desired
   if(!is.null(group)) {
+    if(!is.null(annotations)) {
+      stop("annotations cannot be used if data is being grouped")
+    }
     if(group %in% colnames(obj@Meta)) {
       groups <- obj@Meta[,group]
       names(groups) <- rownames(obj@Meta)
@@ -167,12 +172,21 @@ makeSCHeatmap <- function(obj,
 
     }
   } else if(!is.null(k)) {
-    max.color <- 2 + k
-    row.annot <- ComplexHeatmap::HeatmapAnnotation(
-      Subclone = ComplexHeatmap::anno_block(gp = grid::gpar(fill = 3:max.color),
-                            labels = rownames(plot.data)),
-      which = "row"
-    )
+    if(is.null(annotation.colors)) {
+      max.color <- 2 + k
+      row.annot <- ComplexHeatmap::HeatmapAnnotation(
+        Subclone = ComplexHeatmap::anno_block(gp = grid::gpar(fill = 3:max.color),
+                                              labels = rownames(plot.data)),
+        which = "row"
+      )
+    } else {
+      row.annot <- ComplexHeatmap::HeatmapAnnotation(
+        Subclone = ComplexHeatmap::anno_block(gp = grid::gpar(fill = annotation.colors),
+                                              labels = rownames(plot.data)),
+        which = "row"
+      )
+    }
+
   } else {
     row.annot <- NULL
   }
@@ -198,7 +212,7 @@ makeSCHeatmap <- function(obj,
         annotation_name_gp = grid::gpar(fontsize = 12),
         annotation_name_side = "top"
         )
-      bar_legend <- NULL
+
     } else if (secondary.group %in% colnames(obj@Meta)) {
       secondary.groups <- unique(obj@Meta[,secondary.group])
       prop.matrix <- matrix(rep(0, k* length(secondary.groups)),

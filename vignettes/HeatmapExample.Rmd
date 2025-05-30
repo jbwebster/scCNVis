@@ -96,14 +96,15 @@ example, we may choose to focus only on chr7 and chrX, as seen below:
 plot.regions <- example.granges[example.granges@seqnames == "chr7" |
                                   example.granges@seqnames == "chrX",]
 
+#If using a basic annotation as shown here and you want to specify colors,
+#it should be provided as a named list
+annotation.colors <- list(Sample = c("SampleA" = "red", "SampleB" = "blue"))
+
 heatmap.result <- SCCNVis::makeSCHeatmap(obj,
                                          gr = plot.regions,
                                          annotations = "Sample",
                                          show.annotation.name = TRUE,
-                                         annotation.colors = list(
-                                           Sample = c("SampleA" = "red",
-                                                      "SampleB" = "blue")
-                                         ))
+                                         annotation.colors = annotation.colors)
 ```
 ```{r echo=FALSE, fig.cap="Example 1b. Heatmap of chr7 and chrX, with sample annotation", out.width = '50%'}
 knitr::include_graphics("1b_heatmap.png")
@@ -126,9 +127,13 @@ hc_re <- hclust(dist, method="ward.D2")
 kclusters <- cutree(hc_re, k = 2)
 obj <- SCCNVis::addMetaData(obj, kclusters, colname = "KClusters")
 
+#If using a grouping method, the way to supply annotation colors changes.
+#In this case, they can simply be supplied as a character vector
+annotation.colors <- c("blue", "yellow")
 
 heatmap.result <- SCCNVis::makeSCHeatmap(obj,
-                                         group = "KClusters")
+                                         group = "KClusters",
+                                         annotation.colors = annotation.colors)
 ```
 ```{r echo=FALSE, fig.cap="Example 1c. Heatmap with pre-specified clusters", out.width = '100%'}
 knitr::include_graphics("1c_heatmap.png")
