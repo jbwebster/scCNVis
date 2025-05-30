@@ -68,6 +68,7 @@
 <span>  loss.color <span class="op">=</span> <span class="st">"deeppink"</span>,</span>
 <span>  secondary.group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  data.func <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  remove.chr.prefix <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">F</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -102,6 +103,10 @@
 
 <dt id="arg-data-func">data.func<a class="anchor" aria-label="anchor" href="#arg-data-func"></a></dt>
 <dd><p>A function for defining thresholds of loss(0)/neutral(1)/gain(2) and otherwise manipulating plot data. If not provided, mean +/- sd will be used for thresholding. See FrequencyPlot example on Github for examples. Default = NULL</p></dd>
+
+
+<dt id="arg-remove-chr-prefix">remove.chr.prefix<a class="anchor" aria-label="anchor" href="#arg-remove-chr-prefix"></a></dt>
+<dd><p>Remove 'chr' prefix of chromosome names. Default = TRUE</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>

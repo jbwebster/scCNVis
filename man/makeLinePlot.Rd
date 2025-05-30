@@ -2,7 +2,7 @@
 % Please edit documentation in R/lineplot.R
 \name{makeLinePlot}
 \alias{makeLinePlot}
-\title{Make a line plot showing the average score across different regions}
+\title{Make a line plot showing values across different regions}
 \usage{
 makeLinePlot(
   obj,
@@ -11,6 +11,7 @@ makeLinePlot(
   group = NULL,
   group.colors = NULL,
   group.label = "",
+  method = "mean",
   plot.average.of.groups = FALSE,
   avg.color = "red",
   show.x.ticks = FALSE,
@@ -30,6 +31,10 @@ makeLinePlot(
 
 \item{group.colors}{Named character vector. Names should be the values in the column specified by 'group', values are the colors. Default = NULL}
 
+\item{group.label}{The label to be used for the groups. Default = ""}
+
+\item{method}{Method for aggregating values across a group. Should be "mean", "median" or "range". Default = "mean"}
+
 \item{plot.average.of.groups}{Logical. If TRUE, plot each cluster individually and an additional line representing the average of each cluster. Default = FALSE}
 
 \item{avg.color}{Color. Used for the color of the cluster average, if plot.average.of.clusters == T. Default = 'red'}
@@ -46,5 +51,5 @@ makeLinePlot(
 Returns a list containing "Plot" (ggplot) and "PlotData" (data.frame)
 }
 \description{
-Make a line plot showing the average score across different regions
+Make a line plot showing values across different regions
 }

@@ -12,6 +12,7 @@ makeFrequencyPlot(
   loss.color = "deeppink",
   secondary.group = NULL,
   data.func = NULL,
+  remove.chr.prefix = TRUE,
   verbose = F
 )
 }
@@ -29,6 +30,8 @@ makeFrequencyPlot(
 \item{secondary.group}{Secondary group for plot groupings. Must use a column introduced by data.fun. See FrequencyPlot example on Github for details. Default = NULL}
 
 \item{data.func}{A function for defining thresholds of loss(0)/neutral(1)/gain(2) and otherwise manipulating plot data. If not provided, mean +/- sd will be used for thresholding. See FrequencyPlot example on Github for examples. Default = NULL}
+
+\item{remove.chr.prefix}{Remove 'chr' prefix of chromosome names. Default = TRUE}
 
 \item{verbose}{Verbose logging. Default = FALSE}
 }

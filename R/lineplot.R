@@ -1,12 +1,14 @@
 
 
-#' Make a line plot showing the average score across different regions
+#' Make a line plot showing values across different regions
 #'
 #' @param obj SCCNVis object
 #' @param gr A GenomicRanges::GRanges object specifying which regions to plot. If NULL, all regions will be plotted. Default = NULL
 #' @param window.size Window size for moving average calculation
 #' @param group Name of metadata column to group lines by. Default = NULL
 #' @param group.colors Named character vector. Names should be the values in the column specified by 'group', values are the colors. Default = NULL
+#' @param group.label The label to be used for the groups. Default = ""
+#' @param method Method for aggregating values across a group. Should be "mean", "median" or "range". Default = "mean"
 #' @param plot.average.of.groups Logical. If TRUE, plot each cluster individually and an additional line representing the average of each cluster. Default = FALSE
 #' @param avg.color Color. Used for the color of the cluster average, if plot.average.of.clusters == T. Default = 'red'
 #' @param show.x.ticks Logical. If TRUE, show tick marks on X axis. Only recommended when showing smaller regions. Default = FALSE
@@ -21,6 +23,7 @@ makeLinePlot <- function(obj,
                          group = NULL,
                          group.colors = NULL,
                          group.label = "",
+                         method = "mean",
                          plot.average.of.groups = FALSE,
                          avg.color = 'red',
                          show.x.ticks = FALSE,
@@ -65,7 +68,16 @@ makeLinePlot <- function(obj,
     cells <- plot.groups[plot.groups==curr.group]
     .verboseLog(verbose, paste0("Calculating moving average for group: ", curr.group, " using window size: ", window.size))
     curr.data <- plot.data[names(cells),]
-    col.means <- data.frame(rn = plot.granges$index, Mean = colMeans(curr.data))
+    if (method == "mean") {
+      col.means <- data.frame(rn = plot.granges$index, Mean = colMeans(curr.data))
+    } else if (method == "median") {
+      col.means <- data.frame(rn = plot.granges$index, Mean = apply(curr.data,2,median))
+    } else if (method == "range") {
+      col.means <- data.frame(rn = plot.granges$index, Mean = apply(curr.data,2,max) - apply(curr.data,2,min))
+    } else {
+      stop("method must be 'mean', 'median' or 'range'")
+    }
+
     moving.average <- .movingAverage(col.means, data.frame(plot.granges), window.size = window.size)
     mgr <- merge(moving.average,data.frame(plot.granges), by="index", all.y = TRUE)
     mgr[mgr$index %in% moving.average$index,"moving.average"] <- mgr$moving.average
