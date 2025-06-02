@@ -72,6 +72,5 @@ obj <- scCNVis::createPlotObject(input.matrix = matrix,
 
 ```
 
-Documentation about making [frequency plots]("./a3_FrequencyPlotExample.html"),
-[heatmaps]("./a2_HeatmapExample.html") and [lineplots]("./a4_LineplotExample.html")
+Documentation articles about making frequency plots, heatmaps and line plots
 show how to use this object to generate plots.
