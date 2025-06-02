@@ -15,33 +15,20 @@ knitr::opts_chunk$set(
 devtools::load_all(".")
 ```
 
-For tutorial purposes, scCNVis comes with example inputs. We will begin by
-loading them and giving a brief summary of what is in each of them. Note that
-the length of `cell.names` is equal to the number of rows in `input.matrix`
-and that the length of `granges` is equal to the number of columns in the
-`input.matrix`.
+We will begin by creating a `scCNVis` object using the provided example data.
 
 ```{r setup}
 library(scCNVis)
 
 set.seed(42)
 
-#Example input matrix
 input.matrix <- example.matrix
-print(dim(input.matrix))
 
-#Example cell names
 cell.names <- example.cells
-print(length(cell.names))
-print(cell.names[1:3])
 
-#Example GenomicRanges::GRanges obect
 granges <- example.granges
-print(granges)
 
-#Example metadata data.frame object
 meta.df <- example.meta
-print(head(meta.df))
 
 #Create a scCNVis object
 obj <- scCNVis::createPlotObject(input.matrix, cell.names, granges, meta.df)
@@ -51,7 +38,6 @@ obj <- scCNVis::createPlotObject(input.matrix, cell.names, granges, meta.df)
 The scCNVis object is a simple object. It contains the input matrix (accessible
 as `obj@Matrix`) and the associated GenomicRanges::GRanges object (accessible as
 `obj@GRanges`). It also contains metadata associated with each cell, if provided.
-All plotting functions withing scCNVis use this object as input.
 
 For example, a simple heatmap can be created using the following:
 
