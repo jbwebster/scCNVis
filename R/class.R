@@ -1,5 +1,5 @@
 
-setClass("SCCNVisObject",
+setClass("scCNVisObject",
          representation(
            Matrix = "matrix",
            GRanges = "GRanges",

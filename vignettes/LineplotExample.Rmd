@@ -19,17 +19,17 @@ Although heatmaps are one of the most common ways to visualize single-cell copy
 number results, the combination of large genomes, small genomic bins and drastic
 genomic alterations can make it difficult to observe subtle differences.
 
-A simple line plot can be an easy to way to quickly visualize different regions of the genome and visualize the differences in specific regions. SCCNVis provides a simple line plot method that returns a ggplot2 object, which can be easily customized to fit the user's exact needs. We begin with the example data provided (see the Heatmaps
+A simple line plot can be an easy to way to quickly visualize different regions of the genome and visualize the differences in specific regions. scCNVis provides a simple line plot method that returns a ggplot2 object, which can be easily customized to fit the user's exact needs. We begin with the example data provided (see the Heatmaps
 example for an intro to this data):
 
 ```{r setup}
-library(SCCNVis)
+library(scCNVis)
 
-obj <- SCCNVis::createPlotObject(example.matrix,
+obj <- scCNVis::createPlotObject(example.matrix,
                                  example.cells,
                                  example.granges,
                                  example.meta)
-lineplot.result <- SCCNVis::makeLinePlot(obj)
+lineplot.result <- scCNVis::makeLinePlot(obj)
 print(names(lineplot.result))
 ```
 
@@ -38,7 +38,7 @@ The output from `makeLinePlot` is an object with two items. `Plot` is a ggplot2
 plot that can be further customized as desired. `PlotData` is the data used to
 create the plot, in case the user wants to create their own visualization.
 
-Similar to the `SCCNVis::makeSCHeatmap()` function, the outputs of the line plot
+Similar to the `scCNVis::makeSCHeatmap()` function, the outputs of the line plot
 function can be saved using the provided helper function, or using any other
 method commonly used to save ggplot outputs, such as `ggsave`.
 
@@ -47,13 +47,13 @@ method commonly used to save ggplot outputs, such as `ggsave`.
 #ggplot2::ggsave("~/path/to/lineplot.png", lineplot.result$Plot)
 
 #Simple wrapper for convenience
-SCCNVis::saveCustomPlot(lineplot.result, "/path/to/heatmap.png")
+scCNVis::saveCustomPlot(lineplot.result, "/path/to/heatmap.png")
 ```
 ```{r echo=FALSE, fig.cap="Example 1a. Lineplot", out.width = '100%'}
 knitr::include_graphics("1a_lineplot.png")
 ```
 
-Lineplots may be grouped by any column in the SCCNVis object's metadata. The
+Lineplots may be grouped by any column in the scCNVis object's metadata. The
 function also provides various other ways to customize the plot. Below is
 an example of how this can be done using the `Sample` column, and how the 
 output object can be further customized to the user's preferences:
@@ -63,7 +63,7 @@ output object can be further customized to the user's preferences:
 group.colors <- c("Blue","Red")
 names(group.colors) <- c("SampleA","SampleB")
 
-lineplot.result <- SCCNVis::makeLinePlot(obj,
+lineplot.result <- scCNVis::makeLinePlot(obj,
                                         group = "Sample",
                                         group.colors = group.colors
                                         )
@@ -101,12 +101,12 @@ dynamic.kclusters <- dynamicTreeCut::cutreeDynamic(dendro = hc_re,
                                                    pamRespectsDendro = TRUE
                                                    )
 names(dynamic.kclusters) <- hc_re$labels
-obj <- SCCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
+obj <- scCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
 
-#Using the example.granges object that the SCCNVis object was created from
+#Using the example.granges object that the scCNVis object was created from
 plot.regions <- example.granges[example.granges@seqnames == "chrX",]
 
-lineplot.result <- SCCNVis::makeLinePlot(obj,
+lineplot.result <- scCNVis::makeLinePlot(obj,
                                         gr = plot.regions,
                                         group = "DynamicKClusters",
                                         ylab = "Copy Ratio",
@@ -121,7 +121,7 @@ final.plot <- lineplot.result$Plot +
 #Rather than use ggsave, here I opt to add the updated
 #plot to the lineplot.result object and then use the wrapper function
 #lineplot.result$Plot <- final.plot
-#SCCNVis::saveCustomPlot(lineplot.result, "~/path/to/lineplot.png")
+#scCNVis::saveCustomPlot(lineplot.result, "~/path/to/lineplot.png")
 
 ```
 ```{r echo=FALSE, fig.cap="Example 1c. Lineplot with subclusters", out.width = '100%'}

@@ -69,8 +69,8 @@
     stop("Input object is null")
   }
 
-  if(class(obj) != "SCCNVisObject") {
-    stop("Input object is not of class SCCNVisObject")
+  if(class(obj) != "scCNVisObject") {
+    stop("Input object is not of class scCNVisObject")
   }
 }
 
@@ -89,7 +89,6 @@
   if (is.null(meta)) {
     stop("meta cannot be missing")
   } else {
-    meta$CellNames <- cell.names
     rownames(meta) <- cell.names
     return(meta)
   }

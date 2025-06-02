@@ -1,4 +1,4 @@
-Package: SCCNVis
+Package: scCNVis
 Title: Single-cell copy number visualizations
 Version: 0.0.0.1
 Authors@R: 

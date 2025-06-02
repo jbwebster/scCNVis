@@ -2,7 +2,7 @@
 
 #' Make a line plot showing values across different regions
 #'
-#' @param obj SCCNVis object
+#' @param obj scCNVis object
 #' @param gr A GenomicRanges::GRanges object specifying which regions to plot. If NULL, all regions will be plotted. Default = NULL
 #' @param window.size Window size for moving average calculation
 #' @param group Name of metadata column to group lines by. Default = NULL
@@ -43,7 +43,7 @@ makeLinePlot <- function(obj,
     overlap <- GenomicRanges::findOverlaps(plot.granges, gr, minoverlap = 10)
     plot.granges <- plot.granges[overlap@from]
     if(length(plot.granges) < 1) {
-      stop("Provided GRanges object does not overlap with any regions in the SCCNVisObject")
+      stop("Provided GRanges object does not overlap with any regions in the scCNVisObject")
     }
     plot.granges <- .standardizeGRanges(plot.granges)
     plot.data <- plot.data[,plot.granges$index]

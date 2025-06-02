@@ -15,14 +15,14 @@ knitr::opts_chunk$set(
 devtools::load_all(".")
 ```
 
-For tutorial purposes, SCCNVis comes with example inputs. We will begin by
+For tutorial purposes, scCNVis comes with example inputs. We will begin by
 loading them and giving a brief summary of what is in each of them. Note that
 the length of `cell.names` is equal to the number of rows in `input.matrix`
 and that the length of `granges` is equal to the number of columns in the
 `input.matrix`.
 
 ```{r setup}
-library(SCCNVis)
+library(scCNVis)
 
 set.seed(42)
 
@@ -43,20 +43,20 @@ print(granges)
 meta.df <- example.meta
 print(head(meta.df))
 
-#Create a SCCNVis object
-obj <- SCCNVis::createPlotObject(input.matrix, cell.names, granges, meta.df)
+#Create a scCNVis object
+obj <- scCNVis::createPlotObject(input.matrix, cell.names, granges, meta.df)
 ```
 
 
-The SCCNVis object is a simple object. It contains the input matrix (accessible
+The scCNVis object is a simple object. It contains the input matrix (accessible
 as `obj@Matrix`) and the associated GenomicRanges::GRanges object (accessible as
 `obj@GRanges`). It also contains metadata associated with each cell, if provided.
-All plotting functions withing SCCNVis use this object as input.
+All plotting functions withing scCNVis use this object as input.
 
 For example, a simple heatmap can be created using the following:
 
 ```{r}
-heatmap.result <- SCCNVis::makeSCHeatmap(obj)
+heatmap.result <- scCNVis::makeSCHeatmap(obj)
 print(names(heatmap.result))
 print(names(heatmap.result$PlotData))
 ```
@@ -70,7 +70,7 @@ to create other version of the plot using other packages, or be saved for downst
 analysis. 
 
 The resulting file can be saved however you would normally export a `ComplexHeatmap`.
-For convenience, it can be saved using the SCCNVis wrapper function for exporting plots.
+For convenience, it can be saved using the scCNVis wrapper function for exporting plots.
 The expected output for the heatmap is also shown below.
 ```{r eval=FALSE}
 #Example manual method
@@ -81,7 +81,7 @@ The expected output for the heatmap is also shown below.
 #dev.off()
 
 #Simple wrapper for convenience
-SCCNVis::saveCustomPlot(heatmap.result, "/path/to/heatmap.png")
+scCNVis::saveCustomPlot(heatmap.result, "/path/to/heatmap.png")
 ```
 
 ```{r echo=FALSE, fig.cap="Example 1a. Heatmap", out.width = '100%'}
@@ -100,7 +100,7 @@ plot.regions <- example.granges[example.granges@seqnames == "chr7" |
 #it should be provided as a named list
 annotation.colors <- list(Sample = c("SampleA" = "red", "SampleB" = "blue"))
 
-heatmap.result <- SCCNVis::makeSCHeatmap(obj,
+heatmap.result <- scCNVis::makeSCHeatmap(obj,
                                          gr = plot.regions,
                                          annotations = "Sample",
                                          show.annotation.name = TRUE,
@@ -112,7 +112,7 @@ knitr::include_graphics("1b_heatmap.png")
 
 We can see that there are at least 2 seemingly distinct clusters present in our heatmap. 
 To simplify our heatmap, we may wish to present the data as a simple 
-average of those groups. To do so, we must add metadata to the SCCNVis object
+average of those groups. To do so, we must add metadata to the scCNVis object
 to assign each cell to a group, then tell the makeSCHeatmap function which 
 metadata column to group the cells by. Whenever the heatmap is the result of
 grouped data, the right side of the plot will show the number of cells 
@@ -125,13 +125,13 @@ dist <- parallelDist::parallelDist(obj@Matrix)
 hc_re <- hclust(dist, method="ward.D2")
 #Split the hierarchical clustering into two groups
 kclusters <- cutree(hc_re, k = 2)
-obj <- SCCNVis::addMetaData(obj, kclusters, colname = "KClusters")
+obj <- scCNVis::addMetaData(obj, kclusters, colname = "KClusters")
 
 #If using a grouping method, the way to supply annotation colors changes.
 #In this case, they can simply be supplied as a character vector
 annotation.colors <- c("blue", "yellow")
 
-heatmap.result <- SCCNVis::makeSCHeatmap(obj,
+heatmap.result <- scCNVis::makeSCHeatmap(obj,
                                          group = "KClusters",
                                          annotation.colors = annotation.colors)
 ```
@@ -160,7 +160,7 @@ dynamic.kclusters <- dynamicTreeCut::cutreeDynamic(dendro = hc_re,
                                                    pamRespectsDendro = TRUE
                                                    )
 names(dynamic.kclusters) <- hc_re$labels
-obj <- SCCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
+obj <- scCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
 
 custom.func <- function(data) {
   sd.value <- sd(data, na.rm = TRUE)
@@ -170,7 +170,7 @@ custom.func <- function(data) {
 }
 
 
-heatmap.result <- SCCNVis::makeSCHeatmap(obj,
+heatmap.result <- scCNVis::makeSCHeatmap(obj,
                                          group = "DynamicKClusters",
                                          secondary.group = "Sample",
                                          post.plot.mod.fun = custom.func)

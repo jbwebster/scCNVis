@@ -21,7 +21,7 @@ makeLinePlot(
 )
 }
 \arguments{
-\item{obj}{SCCNVis object}
+\item{obj}{scCNVis object}
 
 \item{gr}{A GenomicRanges::GRanges object specifying which regions to plot. If NULL, all regions will be plotted. Default = NULL}
 

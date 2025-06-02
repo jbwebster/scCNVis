@@ -1,9 +1,9 @@
 
 #' Create a frequency plot
 #'
-#' This function takes a SCCNVisObject and outputs a ggplot2 object
+#' This function takes a scCNVisObject and outputs a ggplot2 object
 #'
-#' @param obj A SCCNVisObject made using createPlotObject()
+#' @param obj A scCNVisObject made using createPlotObject()
 #' @param gr A GenomicRanges:GRanges object of the regions to graph. If NULL, all regions will be plotted. Default = NULL
 #' @param group Metadata column. Average signal will be calculated per group and then called as loss/neutral/gain. Default = "Sample"
 #' @param gain.color Color to represent gain frequency. Default = 'cornflowerblue'
@@ -35,7 +35,7 @@ makeFrequencyPlot <- function(obj,
     overlap <- GenomicRanges::findOverlaps(plot.granges, gr)
     plot.granges <- plot.granges[overlap@from]
     if(length(plot.granges) < 1) {
-      stop("Provided GRanges object does not overlap with any regions in the SCCNVisObject")
+      stop("Provided GRanges object does not overlap with any regions in the scCNVisObject")
     }
     plot.granges <- .standardizeGRanges(plot.granges)
     plot.data <- plot.data[,plot.granges$index]
