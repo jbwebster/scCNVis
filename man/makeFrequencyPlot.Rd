@@ -17,7 +17,7 @@ makeFrequencyPlot(
 )
 }
 \arguments{
-\item{obj}{A SCCNVisObject made using createPlotObject()}
+\item{obj}{A scCNVisObject made using createPlotObject()}
 
 \item{gr}{A GenomicRanges:GRanges object of the regions to graph. If NULL, all regions will be plotted. Default = NULL}
 
@@ -39,5 +39,5 @@ makeFrequencyPlot(
 Returns a list containing a "Plot" (ComplexHeatmap) and "PlotData" (matrix)
 }
 \description{
-This function takes a SCCNVisObject and outputs a ggplot2 object
+This function takes a scCNVisObject and outputs a ggplot2 object
 }

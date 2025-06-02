@@ -3,7 +3,7 @@
 #' Convert AtaCNV column names into a GRanges object
 #'
 #' This functions converts the column names provided by AtaCNV output into
-#' a GenomicRanges::GRanges object for use in creating a SCCNVis object.
+#' a GenomicRanges::GRanges object for use in creating a scCNVis object.
 #' Adapted from Aelita-Stone/AtaCNV
 #'
 #' @param bin.names Character vector of column names from AtaCNV output.
@@ -27,17 +27,17 @@ ataCNVToGRanges <- function(bin.names) {
 }
 
 
-#' Add a column to the metadata held in the SCCNVis object
+#' Add a column to the metadata held in the scCNVis object
 #'
-#' @param obj SCCNVis object to add metadata to
+#' @param obj scCNVis object to add metadata to
 #' @param meta Vector of values to be added to the metadata
 #' @param colname Name of new column to add to metadata
 #' @param cells Cells to add metadata to. If NULL, it is assumed that meta contains one value for each cell and is in the same order as the object's current metadata. If provided, it should be in the same order as meta. Default = NULL
-#' @return SCCNVis object with updated metadata
+#' @return scCNVis object with updated metadata
 #' @export
 addMetaData <- function(obj,meta,colname,cells=NULL) {
-  if (class(obj) != "SCCNVisObject") {
-    stop("obj is not a SCCNVisObject")
+  if (class(obj) != "scCNVisObject") {
+    stop("obj is not a scCNVisObject")
   }
 
   if (is.null(meta)) {
@@ -48,8 +48,10 @@ addMetaData <- function(obj,meta,colname,cells=NULL) {
     stop("colname can not be NULL")
   }
 
-  if(sum(cells %in% obj@Meta$CellNames) < length(cells)) {
-    stop("Not all provided cell names are in obj@Meta$CellNames")
+  if(!is.null(cells)) {
+    if(!all(cells %in% rownames(obj@Meta))) {
+      stop("Not all provided cell names are in obj")
+    }
   }
 
   if(sum(duplicated(cells)) > 0) {
@@ -60,25 +62,25 @@ addMetaData <- function(obj,meta,colname,cells=NULL) {
     if (length(meta) != nrow(obj@Meta)) {
       stop("Length of meta is expected to equal nrow(obj@Meta) when cells == NULL")
     }
-    df <- data.frame(CellNames = obj@Meta$CellNames,
-                     X = meta)
-    colnames(df) <- c("CellNames", colname)
-    merged <- merge(obj@Meta, df, by="CellNames")
-    rownames(merged) <- merged$CellNames
-    merged <- merged[rownames(obj@Meta),]
+    cells <- rownames(obj@Meta)
+    df <- data.frame(X = meta)
+    rownames(df) <- cells
+    colnames(df) <- c(colname)
+    merged <- merge(obj@Meta, df, by="row.names", all.x = TRUE)
+    rownames(merged) <- merged$Row.names
+    merged <- merged[rownames(obj@Meta),c(colnames(obj@Meta), colname)]
     obj@Meta <- merged
     return(obj)
   } else {
     names(meta) <- cells
 
-    df <- data.frame(CellNames = obj@Meta$CellNames,
-                     X = rep(NA, nrow(obj@Meta)))
-    keys <- df[df$CellNames %in% cells,"CellNames"]
-    df[df$CellNames %in% cells,"X"] <- meta[keys]
-    colnames(df) <- c("CellNames",colname)
-    merged <- merge(obj@Meta, df, by="CellNames")
-    rownames(merged) <- merged$CellNames
-    merged <- merged[rownames(obj@Meta),]
+    df <- data.frame(X = rep(NA, nrow(obj@Meta)))
+    rownames(df) <- rownames(obj@Meta)
+    df[cells,"X"] <- meta
+    colnames(df) <- c(colname)
+    merged <- merge(obj@Meta, df, by="row.names")
+    rownames(merged) <- merged$Row.names
+    merged <- merged[rownames(obj@Meta),c(colnames(obj@Meta), colname)]
     obj@Meta <- merged
     return(obj)
 
@@ -86,7 +88,7 @@ addMetaData <- function(obj,meta,colname,cells=NULL) {
 }
 
 
-#' Create a SCCNVis object for plotting
+#' Create a scCNVis object for plotting
 #'
 #' This function creates a basic object containing the information needed
 #' to plot copy number data from a single-cell experiment. It expects
@@ -123,7 +125,7 @@ createPlotObject <- function(input.matrix, cell.names, granges, meta) {
   meta <- .standardizeMeta(meta, cell.names)
 
 
-  out <- new("SCCNVisObject",
+  out <- new("scCNVisObject",
              Matrix = input.matrix,
              GRanges = granges,
              Meta = meta)

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lineplot Example • SCCNVis</title>
+<title>Lineplot Example • scCNVis</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -31,7 +31,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">SCCNVis</a>
+        <a class="navbar-link" href="../index.html">scCNVis</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.1</span>
       </span>
     </div>
@@ -89,25 +89,25 @@ genomic bins and drastic genomic alterations can make it difficult to
 observe subtle differences.</p>
 <p>A simple line plot can be an easy to way to quickly visualize
 different regions of the genome and visualize the differences in
-specific regions. SCCNVis provides a simple line plot method that
+specific regions. scCNVis provides a simple line plot method that
 returns a ggplot2 object, which can be easily customized to fit the
 user’s exact needs. We begin with the example data provided (see the
 Heatmaps example for an intro to this data):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SCCNVis</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scCNVis</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">example.matrix</span>,</span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">example.matrix</span>,</span>
 <span>                                 <span class="va">example.cells</span>,</span>
 <span>                                 <span class="va">example.granges</span>,</span>
 <span>                                 <span class="va">example.meta</span><span class="op">)</span></span>
-<span><span class="va">lineplot.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeLinePlot.html">makeLinePlot</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<span><span class="va">lineplot.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeLinePlot.html">makeLinePlot</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">lineplot.result</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Plot"     "PlotData"</span></span></code></pre></div>
 <p>The output from <code>makeLinePlot</code> is an object with two
 items. <code>Plot</code> is a ggplot2 plot that can be further
 customized as desired. <code>PlotData</code> is the data used to create
 the plot, in case the user wants to create their own visualization.</p>
-<p>Similar to the <code><a href="../reference/makeSCHeatmap.html">SCCNVis::makeSCHeatmap()</a></code> function, the
+<p>Similar to the <code><a href="../reference/makeSCHeatmap.html">scCNVis::makeSCHeatmap()</a></code> function, the
 outputs of the line plot function can be saved using the provided helper
 function, or using any other method commonly used to save ggplot
 outputs, such as <code>ggsave</code>.</p>
@@ -116,13 +116,13 @@ outputs, such as <code>ggsave</code>.</p>
 <span><span class="co">#ggplot2::ggsave("~/path/to/lineplot.png", lineplot.result$Plot)</span></span>
 <span></span>
 <span><span class="co">#Simple wrapper for convenience</span></span>
-<span><span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/saveCustomPlot.html">saveCustomPlot</a></span><span class="op">(</span><span class="va">lineplot.result</span>, <span class="st">"/path/to/heatmap.png"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/saveCustomPlot.html">saveCustomPlot</a></span><span class="op">(</span><span class="va">lineplot.result</span>, <span class="st">"/path/to/heatmap.png"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="1a_lineplot.png" alt="Example 1a. Lineplot" width="100%"><p class="caption">
 Example 1a. Lineplot
 </p>
 </div>
-<p>Lineplots may be grouped by any column in the SCCNVis object’s
+<p>Lineplots may be grouped by any column in the scCNVis object’s
 metadata. The function also provides various other ways to customize the
 plot. Below is an example of how this can be done using the
 <code>Sample</code> column, and how the output object can be further
@@ -132,7 +132,7 @@ customized to the user’s preferences:</p>
 <span><span class="va">group.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Blue"</span>,<span class="st">"Red"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">group.colors</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleA"</span>,<span class="st">"SampleB"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">lineplot.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeLinePlot.html">makeLinePlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
+<span><span class="va">lineplot.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeLinePlot.html">makeLinePlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                        group <span class="op">=</span> <span class="st">"Sample"</span>,</span>
 <span>                                        group.colors <span class="op">=</span> <span class="va">group.colors</span></span>
 <span>                                        <span class="op">)</span></span>
@@ -171,12 +171,12 @@ output plot.</p>
 <span><span class="co">#&gt;  ..cutHeight not given, setting it to 292  ===&gt;  99% of the (truncated) height range in dendro.</span></span>
 <span><span class="co">#&gt;  ..done.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">dynamic.kclusters</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">hc_re</span><span class="op">$</span><span class="va">labels</span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">dynamic.kclusters</span>, colname <span class="op">=</span> <span class="st">"DynamicKClusters"</span><span class="op">)</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">dynamic.kclusters</span>, colname <span class="op">=</span> <span class="st">"DynamicKClusters"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#Using the example.granges object that the SCCNVis object was created from</span></span>
+<span><span class="co">#Using the example.granges object that the scCNVis object was created from</span></span>
 <span><span class="va">plot.regions</span> <span class="op">&lt;-</span> <span class="va">example.granges</span><span class="op">[</span><span class="va">example.granges</span><span class="op">@</span><span class="va">seqnames</span> <span class="op">==</span> <span class="st">"chrX"</span>,<span class="op">]</span></span>
 <span></span>
-<span><span class="va">lineplot.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeLinePlot.html">makeLinePlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
+<span><span class="va">lineplot.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeLinePlot.html">makeLinePlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                        gr <span class="op">=</span> <span class="va">plot.regions</span>,</span>
 <span>                                        group <span class="op">=</span> <span class="st">"DynamicKClusters"</span>,</span>
 <span>                                        ylab <span class="op">=</span> <span class="st">"Copy Ratio"</span>,</span>
@@ -191,7 +191,7 @@ output plot.</p>
 <span><span class="co">#Rather than use ggsave, here I opt to add the updated</span></span>
 <span><span class="co">#plot to the lineplot.result object and then use the wrapper function</span></span>
 <span><span class="co">#lineplot.result$Plot &lt;- final.plot</span></span>
-<span><span class="co">#SCCNVis::saveCustomPlot(lineplot.result, "~/path/to/lineplot.png")</span></span></code></pre></div>
+<span><span class="co">#scCNVis::saveCustomPlot(lineplot.result, "~/path/to/lineplot.png")</span></span></code></pre></div>
 <div class="figure">
 <img src="1c_lineplot.png" alt="Example 1c. Lineplot with subclusters" width="100%"><p class="caption">
 Example 1c. Lineplot with subclusters

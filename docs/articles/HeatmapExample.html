@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Heatmap Example • SCCNVis</title>
+<title>Heatmap Example • scCNVis</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -31,7 +31,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">SCCNVis</a>
+        <a class="navbar-link" href="../index.html">scCNVis</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.1</span>
       </span>
     </div>
@@ -83,14 +83,14 @@
 
     
     
-<p>For tutorial purposes, SCCNVis comes with example inputs. We will
+<p>For tutorial purposes, scCNVis comes with example inputs. We will
 begin by loading them and giving a brief summary of what is in each of
 them. Note that the length of <code>cell.names</code> is equal to the
 number of rows in <code>input.matrix</code> and that the length of
 <code>granges</code> is equal to the number of columns in the
 <code>input.matrix</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SCCNVis</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scCNVis</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span></span>
@@ -137,16 +137,16 @@ number of rows in <code>input.matrix</code> and that the length of
 <span><span class="co">#&gt; cell-5 SampleA</span></span>
 <span><span class="co">#&gt; cell-6 SampleA</span></span>
 <span></span>
-<span><span class="co">#Create a SCCNVis object</span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">input.matrix</span>, <span class="va">cell.names</span>, <span class="va">granges</span>, <span class="va">meta.df</span><span class="op">)</span></span></code></pre></div>
-<p>The SCCNVis object is a simple object. It contains the input matrix
+<span><span class="co">#Create a scCNVis object</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">input.matrix</span>, <span class="va">cell.names</span>, <span class="va">granges</span>, <span class="va">meta.df</span><span class="op">)</span></span></code></pre></div>
+<p>The scCNVis object is a simple object. It contains the input matrix
 (accessible as <code>obj@Matrix</code>) and the associated
 GenomicRanges::GRanges object (accessible as <code>obj@GRanges</code>).
 It also contains metadata associated with each cell, if provided. All
-plotting functions withing SCCNVis use this object as input.</p>
+plotting functions withing scCNVis use this object as input.</p>
 <p>For example, a simple heatmap can be created using the following:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">heatmap.result</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Plot"     "PlotData"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">heatmap.result</span><span class="op">$</span><span class="va">PlotData</span><span class="op">)</span><span class="op">)</span></span>
@@ -161,7 +161,7 @@ the plot. These values can be used to create other version of the plot
 using other packages, or be saved for downstream analysis.</p>
 <p>The resulting file can be saved however you would normally export a
 <code>ComplexHeatmap</code>. For convenience, it can be saved using the
-SCCNVis wrapper function for exporting plots. The expected output for
+scCNVis wrapper function for exporting plots. The expected output for
 the heatmap is also shown below.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Example manual method</span></span>
@@ -172,7 +172,7 @@ the heatmap is also shown below.</p>
 <span><span class="co">#dev.off()</span></span>
 <span></span>
 <span><span class="co">#Simple wrapper for convenience</span></span>
-<span><span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/saveCustomPlot.html">saveCustomPlot</a></span><span class="op">(</span><span class="va">heatmap.result</span>, <span class="st">"/path/to/heatmap.png"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/saveCustomPlot.html">saveCustomPlot</a></span><span class="op">(</span><span class="va">heatmap.result</span>, <span class="st">"/path/to/heatmap.png"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="1a_heatmap.png" alt="Example 1a. Heatmap" width="100%"><p class="caption">
 Example 1a. Heatmap
@@ -190,7 +190,7 @@ chr7 and chrX, as seen below:</p>
 <span><span class="co">#it should be provided as a named list</span></span>
 <span><span class="va">annotation.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleA"</span> <span class="op">=</span> <span class="st">"red"</span>, <span class="st">"SampleB"</span> <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
+<span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                         gr <span class="op">=</span> <span class="va">plot.regions</span>,</span>
 <span>                                         annotations <span class="op">=</span> <span class="st">"Sample"</span>,</span>
 <span>                                         show.annotation.name <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -203,7 +203,7 @@ Example 1b. Heatmap of chr7 and chrX, with sample annotation
 <p>We can see that there are at least 2 seemingly distinct clusters
 present in our heatmap. To simplify our heatmap, we may wish to present
 the data as a simple average of those groups. To do so, we must add
-metadata to the SCCNVis object to assign each cell to a group, then tell
+metadata to the scCNVis object to assign each cell to a group, then tell
 the makeSCHeatmap function which metadata column to group the cells by.
 Whenever the heatmap is the result of grouped data, the right side of
 the plot will show the number of cells described by each group.</p>
@@ -214,13 +214,13 @@ the plot will show the number of cells described by each group.</p>
 <span><span class="va">hc_re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust</a></span><span class="op">(</span><span class="va">dist</span>, method<span class="op">=</span><span class="st">"ward.D2"</span><span class="op">)</span></span>
 <span><span class="co">#Split the hierarchical clustering into two groups</span></span>
 <span><span class="va">kclusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cutree.html" class="external-link">cutree</a></span><span class="op">(</span><span class="va">hc_re</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">kclusters</span>, colname <span class="op">=</span> <span class="st">"KClusters"</span><span class="op">)</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">kclusters</span>, colname <span class="op">=</span> <span class="st">"KClusters"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#If using a grouping method, the way to supply annotation colors changes.</span></span>
 <span><span class="co">#In this case, they can simply be supplied as a character vector</span></span>
 <span><span class="va">annotation.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"yellow"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
+<span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                         group <span class="op">=</span> <span class="st">"KClusters"</span>,</span>
 <span>                                         annotation.colors <span class="op">=</span> <span class="va">annotation.colors</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
@@ -252,7 +252,7 @@ our data.</p>
 <span><span class="co">#&gt;  ..cutHeight not given, setting it to 292  ===&gt;  99% of the (truncated) height range in dendro.</span></span>
 <span><span class="co">#&gt;  ..done.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">dynamic.kclusters</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">hc_re</span><span class="op">$</span><span class="va">labels</span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">dynamic.kclusters</span>, colname <span class="op">=</span> <span class="st">"DynamicKClusters"</span><span class="op">)</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">dynamic.kclusters</span>, colname <span class="op">=</span> <span class="st">"DynamicKClusters"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">custom.func</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">sd.value</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">data</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -262,7 +262,7 @@ our data.</p>
 <span><span class="op">}</span></span>
 <span></span>
 <span></span>
-<span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
+<span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                         group <span class="op">=</span> <span class="st">"DynamicKClusters"</span>,</span>
 <span>                                         secondary.group <span class="op">=</span> <span class="st">"Sample"</span>,</span>
 <span>                                         post.plot.mod.fun <span class="op">=</span> <span class="va">custom.func</span><span class="op">)</span></span></code></pre></div>

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Frequency Plot Example • SCCNVis</title>
+<title>Frequency Plot Example • scCNVis</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -31,7 +31,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">SCCNVis</a>
+        <a class="navbar-link" href="../index.html">scCNVis</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.0.0.1</span>
       </span>
     </div>
@@ -96,15 +96,15 @@ perform thresholding to label regions as loss/neutral/gain. As a primary
 example, we can begin with the example data and use the default values
 for the function.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SCCNVis</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scCNVis</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">example.matrix</span>,</span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">example.matrix</span>,</span>
 <span>                                 <span class="va">example.cells</span>,</span>
 <span>                                 <span class="va">example.granges</span>,</span>
 <span>                                 <span class="va">example.meta</span><span class="op">)</span></span>
-<span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#SCCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
+<span><span class="co">#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
 <div class="figure">
 <img src="1a_frequencyplot.png" alt="Example 1a. Frequency Plot" width="100%"><p class="caption">
 Example 1a. Frequency Plot
@@ -137,7 +137,7 @@ those values with custom colors.</p>
 <span><span class="co">#&gt;  ..cutHeight not given, setting it to 292  ===&gt;  99% of the (truncated) height range in dendro.</span></span>
 <span><span class="co">#&gt;  ..done.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">dynamic.kclusters</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">hc_re</span><span class="op">$</span><span class="va">labels</span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">dynamic.kclusters</span>, colname <span class="op">=</span> <span class="st">"DynamicKClusters"</span><span class="op">)</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">dynamic.kclusters</span>, colname <span class="op">=</span> <span class="st">"DynamicKClusters"</span><span class="op">)</span></span>
 <span></span>
 <span></span>
 <span><span class="co">#Defining a custom thresholding function</span></span>
@@ -163,13 +163,13 @@ those values with custom colors.</p>
 <span>      <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
 <span></span>
-<span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
+<span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                        group <span class="op">=</span> <span class="st">"DynamicKClusters"</span>,</span>
 <span>                                        data.func <span class="op">=</span> <span class="va">custom.data.func</span>,</span>
 <span>                                        gain.color <span class="op">=</span> <span class="st">"green"</span>,</span>
 <span>                                        loss.color <span class="op">=</span> <span class="st">"purple"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#SCCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
+<span><span class="co">#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
 <div class="figure">
 <img src="1b_frequencyplot.png" alt="Example 1b. Frequency Plot, pseudobulked subclones" width="100%"><p class="caption">
 Example 1b. Frequency Plot, pseudobulked subclones
@@ -218,12 +218,12 @@ genome.</p>
 <span>    <span class="op">}</span></span>
 <span></span>
 <span><span class="co">#Again, using the DynamicKClusters metadata added previously</span></span>
-<span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
+<span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                        group <span class="op">=</span> <span class="st">"DynamicKClusters"</span>,</span>
 <span>                                        secondary.group <span class="op">=</span> <span class="st">"Phenotype"</span>,</span>
 <span>                                        data.func <span class="op">=</span> <span class="va">custom.data.func</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#SCCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
+<span><span class="co">#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
 <div class="figure">
 <img src="1c_frequencyplot.png" alt="Example 1c. Frequency Plot, pseudobulked subclones grouped by arbitrary phenotype" width="100%"><p class="caption">
 Example 1c. Frequency Plot, pseudobulked subclones grouped by arbitrary
@@ -238,7 +238,7 @@ the plot, so users can create the plot from scratch if they desired. An
 example of this customization is shown below.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">SCCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">final.plot</span> <span class="op">&lt;-</span> <span class="va">fp.result</span><span class="op">$</span><span class="va">Plot</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0</span>, color<span class="op">=</span><span class="st">'black'</span><span class="op">)</span> <span class="op">+</span></span>
@@ -250,7 +250,7 @@ example of this customization is shown below.</p>
 <span>                     axis.ticks.x <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#fp.result$Plot &lt;- final.plot</span></span>
-<span><span class="co">#SCCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
+<span><span class="co">#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
 <div class="figure">
 <img src="1d_frequencyplot.png" alt="Example 1d. Frequency Plot with customization" width="100%"><p class="caption">
 Example 1d. Frequency Plot with customization

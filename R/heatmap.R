@@ -1,8 +1,8 @@
 #' Create a custom heatmap of copy number data
 #'
-#' This function takes a SCCNVisObject and outputs a ComplexHeatmap::Heatmap object
+#' This function takes a scCNVisObject and outputs a ComplexHeatmap::Heatmap object
 #'
-#' @param obj A SCCNVisObject made using createPlotObject()
+#' @param obj A scCNVisObject made using createPlotObject()
 #' @param gr A GenomicRanges:GRanges object of the regions to graph. If NULL, all regions will be plotted. Default = NULL
 #' @param annotations Column names from obj metadata to use for annotating cells on the left of the plot. Default = NULL
 #' @param annotation.colors Colors used in annotation. See heatmap vignette for example. Default = NULL
@@ -42,7 +42,7 @@ makeSCHeatmap <- function(obj,
     overlap <- GenomicRanges::findOverlaps(plot.granges, gr)
     plot.granges <- plot.granges[overlap@from]
     if(length(plot.granges) < 1) {
-      stop("Provided GRanges object does not overlap with any regions in the SCCNVisObject")
+      stop("Provided GRanges object does not overlap with any regions in the scCNVisObject")
     }
     plot.granges <- .standardizeGRanges(plot.granges)
     plot.data <- plot.data[,plot.granges$index]

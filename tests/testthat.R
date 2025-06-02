@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(SCCNVis)
+library(scCNVis)
 
-test_check("SCCNVis")
+test_check("scCNVis")

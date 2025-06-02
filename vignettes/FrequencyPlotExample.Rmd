@@ -28,15 +28,15 @@ It will then perform thresholding to label regions as loss/neutral/gain. As a pr
 example, we can begin with the example data and use the default values for the function.
 
 ```{r setup}
-library(SCCNVis)
+library(scCNVis)
 
-obj <- SCCNVis::createPlotObject(example.matrix,
+obj <- scCNVis::createPlotObject(example.matrix,
                                  example.cells,
                                  example.granges,
                                  example.meta)
-fp.result <- SCCNVis::makeFrequencyPlot(obj)
+fp.result <- scCNVis::makeFrequencyPlot(obj)
 
-#SCCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
+#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
 ```
 ```{r echo=FALSE, fig.cap="Example 1a. Frequency Plot", out.width = '100%'}
 knitr::include_graphics("1a_frequencyplot.png")
@@ -66,7 +66,7 @@ dynamic.kclusters <- dynamicTreeCut::cutreeDynamic(dendro = hc_re,
                                                    pamRespectsDendro = TRUE
                                                    )
 names(dynamic.kclusters) <- hc_re$labels
-obj <- SCCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
+obj <- scCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
 
 
 #Defining a custom thresholding function
@@ -92,13 +92,13 @@ custom.data.func <- function(data) {
       return(data)
     }
 
-fp.result <- SCCNVis::makeFrequencyPlot(obj,
+fp.result <- scCNVis::makeFrequencyPlot(obj,
                                         group = "DynamicKClusters",
                                         data.func = custom.data.func,
                                         gain.color = "green",
                                         loss.color = "purple")
 
-#SCCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
+#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
 ```
 ```{r echo=FALSE, fig.cap="Example 1b. Frequency Plot, pseudobulked subclones", out.width = '100%'}
 knitr::include_graphics("1b_frequencyplot.png")
@@ -145,12 +145,12 @@ custom.data.func <- function(data) {
     }
 
 #Again, using the DynamicKClusters metadata added previously
-fp.result <- SCCNVis::makeFrequencyPlot(obj,
+fp.result <- scCNVis::makeFrequencyPlot(obj,
                                         group = "DynamicKClusters",
                                         secondary.group = "Phenotype",
                                         data.func = custom.data.func)
 
-#SCCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
+#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
 ```
 ```{r echo=FALSE, fig.cap="Example 1c. Frequency Plot, pseudobulked subclones grouped by arbitrary phenotype", out.width = '100%'}
 knitr::include_graphics("1c_frequencyplot.png")
@@ -164,7 +164,7 @@ this customization is shown below.
 
 ```{r}
 
-fp.result <- SCCNVis::makeFrequencyPlot(obj)
+fp.result <- scCNVis::makeFrequencyPlot(obj)
 
 final.plot <- fp.result$Plot +
   ggplot2::geom_hline(yintercept = 0, color='black') +
@@ -176,7 +176,7 @@ final.plot <- fp.result$Plot +
                      axis.ticks.x = ggplot2::element_blank())
 
 #fp.result$Plot <- final.plot
-#SCCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
+#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
 ```
 ```{r echo=FALSE, fig.cap="Example 1d. Frequency Plot with customization", out.width = '100%'}
 knitr::include_graphics("1d_frequencyplot.png")
