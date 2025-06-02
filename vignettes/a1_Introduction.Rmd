@@ -1,0 +1,77 @@
+---
+title: "Introduction"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+devtools::load_all(".")
+```
+
+scCNVis is an R package for exploring single-cell copy number data. All plotting
+functions take as input an `scCNVis` object. Example data has been provided
+to show how this is done. 
+
+First, is the example input matrix containing the copy number values:
+
+```{r setup}
+library(scCNVis)
+
+#Example matrix
+#Rows = cells, Columns = Genomc regions, Values = Copy number values (or a similar metric)
+#Row names and column names are optional, because the cell names and column
+#info will be provided separately
+matrix <- example.matrix
+print(dim(matrix))
+print(matrix[1:5,1:5])
+```
+
+Second, is the example cell names:
+```{r}
+
+cells <- example.cells
+#The number of cell names should be the same as the number of rows as the input
+#matrix, and should be in the same order as those rows
+print(length(cells))
+print(cells[1:5])
+```
+
+Third, is a `GenomicRanges::GRanges` object. It should have the same length
+as the number of columns in the input matrix, where each entry describes
+a genomic bin. Bins are expected to be region-sorted and non-overlapping.
+```{r}
+granges <- example.granges
+print(granges)
+```
+
+Finally, is the input meta data. This is a data.frame where each row
+corresponds to a cell. At a minimum, this should have a `Sample` column
+describing what sample the cell came from, but can include an arbitrary amount of
+other data as well. Row names should be the provided cell names.
+
+```{r}
+meta <- example.meta
+print(dim(meta))
+print(head(meta))
+```
+
+These inputs can be used to create a `scCNVis` object.
+
+```{r}
+obj <- scCNVis::createPlotObject(input.matrix = matrix,
+                                 cell.names = cells,
+                                 granges = granges,
+                                 meta = meta)
+
+```
+
+Documentation about making [frequency plots]("./a3_FrequencyPlotExample.html"),
+[heatmaps]("./a2_HeatmapExample.html") and [lineplots]("./a4_LineplotExample.html")
+show how to use this object to generate plots.
