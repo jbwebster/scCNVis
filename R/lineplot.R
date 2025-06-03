@@ -8,7 +8,7 @@
 #' @param group Name of metadata column to group lines by. Default = NULL
 #' @param group.colors Named character vector. Names should be the values in the column specified by 'group', values are the colors. Default = NULL
 #' @param group.label The label to be used for the groups. Default = ""
-#' @param method Method for aggregating values across a group. Should be "mean", "median" or "range". Default = "mean"
+#' @param method Method for aggregating values across a group. Should be "mean", "median", "sd" or "range". Default = "mean"
 #' @param plot.average.of.groups Logical. If TRUE, plot each cluster individually and an additional line representing the average of each cluster. Default = FALSE
 #' @param avg.color Color. Used for the color of the cluster average, if plot.average.of.clusters == T. Default = 'red'
 #' @param show.x.ticks Logical. If TRUE, show tick marks on X axis. Only recommended when showing smaller regions. Default = FALSE
@@ -74,8 +74,10 @@ makeLinePlot <- function(obj,
       col.means <- data.frame(rn = plot.granges$index, Mean = apply(curr.data,2,median))
     } else if (method == "range") {
       col.means <- data.frame(rn = plot.granges$index, Mean = apply(curr.data,2,max) - apply(curr.data,2,min))
+    } else if (method == "sd") {
+      col.means <- data.frame(rn = plot.granges$index, Mean = apply(curr.data,2,sd))
     } else {
-      stop("method must be 'mean', 'median' or 'range'")
+      stop("method must be 'mean', 'median', 'sd', or 'range'")
     }
 
     moving.average <- .movingAverage(col.means, data.frame(plot.granges), window.size = window.size)

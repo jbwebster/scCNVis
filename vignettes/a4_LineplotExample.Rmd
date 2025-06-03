@@ -127,3 +127,51 @@ final.plot <- lineplot.result$Plot +
 ```{r echo=FALSE, fig.cap="Example 1c. Lineplot with subclusters", out.width = '100%'}
 knitr::include_graphics("1c_lineplot.png")
 ```
+
+Finally, `makeLinePlot` supports alternative metrics that may provide new insights
+using the `method` parameter. By default, `method = mean` and the line plot shows
+the average value in each genomic bin for each group. Using `method = median` provides a 
+similar approach. However, `method = range` reports the range (max - minimum) for
+a group, showing the heterogeneity within the group. We can combine this with 
+grouped subclone data to measure the variability amongst subclones. The result
+is a line plot where the y-axis is a measure of variability between subclones,
+reported as the maximum subclone value minus the minimum subclone value.
+
+```{r}
+#Recall that we have already added DynamicKClusters to the meta data of our object,
+#which grouped the cells into 4 subclones
+
+#makeSCHeatmap will aggregate the values from each subclone (see Heatmap example)
+heatmap.result <- scCNVis::makeSCHeatmap(obj, group = "DynamicKClusters")
+
+#Extract the aggregated data used for the heatmap plot
+subclone.data <- heatmap.result$PlotData$PlotData
+#Note that it has 4 rows, one for each subclone
+#and 1 column for each genomic bin
+print(dim(subclone.data))
+
+##Create a new scCNVis object with the aggregated data
+#Create metadata for the new object, with the required "Sample" column
+agg.meta <- data.frame(Sample = rep("Aggregated Subclones", 4))
+agg.cells <- c("Subclone 1","Subclone 2","Subclone 3", "Subclone 4")
+rownames(agg.meta) <- agg.cells
+
+agg.obj <- scCNVis::createPlotObject(subclone.data,
+                                     cell.names = agg.cells,
+                                     granges = example.granges,
+                                     meta = agg.meta)
+
+lineplot.result <- scCNVis::makeLinePlot(agg.obj,
+                                         method = "range")
+
+#Customize as desired
+final.plot <- lineplot.result$Plot +
+  ggplot2::labs(x="Position",
+                y="Max - Min Subclone",
+                title="Subclone Variability") +
+  ggplot2::theme(legend.position="none")
+
+```
+```{r echo=FALSE, fig.cap="Example 1c. Lineplot with subclusters", out.width = '100%'}
+knitr::include_graphics("1d_lineplot.png")
+```
