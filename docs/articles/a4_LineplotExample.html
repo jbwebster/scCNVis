@@ -200,6 +200,60 @@ output plot.</p>
 Example 1c. Lineplot with subclusters
 </p>
 </div>
+<p>Finally, <code>makeLinePlot</code> supports alternative metrics that
+may provide new insights using the <code>method</code> parameter. By
+default, <code>method = mean</code> and the line plot shows the average
+value in each genomic bin for each group. Using
+<code>method = median</code> provides a similar approach. However,
+<code>method = range</code> reports the range (max - minimum) for a
+group, showing the heterogeneity within the group. We can combine this
+with grouped subclone data to measure the variability amongst subclones.
+The result is a line plot where the y-axis is a measure of variability
+between subclones, reported as the maximum subclone value minus the
+minimum subclone value.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#Recall that we have already added DynamicKClusters to the meta data of our object,</span></span>
+<span><span class="co">#which grouped the cells into 4 subclones</span></span>
+<span></span>
+<span><span class="co">#makeSCHeatmap will aggregate the values from each subclone (see Heatmap example)</span></span>
+<span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>, group <span class="op">=</span> <span class="st">"DynamicKClusters"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#Extract the aggregated data used for the heatmap plot</span></span>
+<span><span class="va">subclone.data</span> <span class="op">&lt;-</span> <span class="va">heatmap.result</span><span class="op">$</span><span class="va">PlotData</span><span class="op">$</span><span class="va">PlotData</span></span>
+<span><span class="co">#Note that it has 4 rows, one for each subclone</span></span>
+<span><span class="co">#and 1 column for each genomic bin</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">subclone.data</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1]    4 2813</span></span>
+<span></span>
+<span><span class="co">##Create a new scCNVis object with the aggregated data</span></span>
+<span><span class="co">#Create metadata for the new object, with the required "Sample" column</span></span>
+<span><span class="va">agg.meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Aggregated Subclones"</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">agg.cells</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Subclone 1"</span>,<span class="st">"Subclone 2"</span>,<span class="st">"Subclone 3"</span>, <span class="st">"Subclone 4"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">agg.meta</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">agg.cells</span></span>
+<span></span>
+<span><span class="va">agg.obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">subclone.data</span>,</span>
+<span>                                     cell.names <span class="op">=</span> <span class="va">agg.cells</span>,</span>
+<span>                                     granges <span class="op">=</span> <span class="va">example.granges</span>,</span>
+<span>                                     meta <span class="op">=</span> <span class="va">agg.meta</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">lineplot.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeLinePlot.html">makeLinePlot</a></span><span class="op">(</span><span class="va">agg.obj</span>,</span>
+<span>                                         method <span class="op">=</span> <span class="st">"range"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#Customize as desired</span></span>
+<span><span class="va">final.plot</span> <span class="op">&lt;-</span> <span class="va">lineplot.result</span><span class="op">$</span><span class="va">Plot</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x<span class="op">=</span><span class="st">"Position"</span>,</span>
+<span>                y<span class="op">=</span><span class="st">"Max - Min Subclone"</span>,</span>
+<span>                title<span class="op">=</span><span class="st">"Subclone Variability"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="1d_lineplot.png" alt="Example 1d. Lineplot ranges" width="100%"><p class="caption">
+Example 1d. Lineplot ranges
+</p>
+</div>
+<p>If you compare the above plot to plot 1b/1c from earlier, you can see
+that this plot is highlighting the regions where those previous plots
+were showing the greatest variability among groups. A similar approach
+can be achieved using <code>method = sd</code>.</p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

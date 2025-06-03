@@ -32,9 +32,11 @@ BiocManager::install("ComplexHeatmap")
 BiocManager::install("GenomicRanges")
 ```
 
-## Tutorial
+## Quickstart
 
-A high-level overview of how the package works is outlined below.
+A high-level overview of how the package works is outlined below. See full
+documentation for further explanations and details, including alternative 
+plot types.
 
 scCNVis works with scCNVis objects. This provides a common format that can be
 created using the outputs from any of the common CNV callers. To create a 

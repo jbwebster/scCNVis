@@ -172,6 +172,10 @@ final.plot <- lineplot.result$Plot +
   ggplot2::theme(legend.position="none")
 
 ```
-```{r echo=FALSE, fig.cap="Example 1c. Lineplot with subclusters", out.width = '100%'}
+```{r echo=FALSE, fig.cap="Example 1d. Lineplot ranges", out.width = '100%'}
 knitr::include_graphics("1d_lineplot.png")
 ```
+If you compare the above plot to plot 1b/1c from earlier, you can see that this
+plot is highlighting the regions where those previous plots were showing the
+greatest variability among groups. A similar approach can be achieved
+using `method = sd`.
