@@ -10,6 +10,7 @@
 #' @param secondary.group Name of metadata column. Can be used to add a secondary annotation describing the composition of 'group'. Default = NULL
 #' @param show.annotation.name Show annotation names. Does nothing if annotations is NULL. Default == NULL
 #' @param add.noise Add minor noise to the data for clustering purposes. The visualization will not include the noise. Default = TRUE
+#' @param border Draw borders. Default = FALSE
 #' @param post.plot.mod.fun A function to apply to plot data before final plotting. Default == NULL
 #' @param heatmap.colors Named vector of numeric values. Names should be colors, values correspond to values in the heatmap. If NULL, a red/white/blue color ramp will be used, centered on the median. Default = NULL
 #' @param legend.title Title for the legend describing the heatmap. Often something like "log2(copy ratio)" or some other metric. Default = "Value"
@@ -25,6 +26,7 @@ makeSCHeatmap <- function(obj,
                           secondary.group = NULL,
                           show.annotation.name = FALSE,
                           add.noise = T,
+                          border = FALSE,
                           post.plot.mod.fun = NULL,
                           heatmap.colors = NULL,
                           legend.title = "Value",
@@ -284,6 +286,7 @@ makeSCHeatmap <- function(obj,
       plot.data,
       name = legend.title,
       col = color.map,
+      border = border,
       cluster_rows = hc_re,
       cluster_columns = FALSE,
       left_annotation = row.annot,
@@ -304,7 +307,7 @@ makeSCHeatmap <- function(obj,
       col = color.map,
       cluster_rows = FALSE,
       row_split = new.kclusters,
-      border = TRUE,
+      border = border,
       row_title = NULL,
       cluster_columns = FALSE,
       left_annotation = row.annot,
