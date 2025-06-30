@@ -109,7 +109,12 @@ GenomicRanges::GRanges object (accessible as <code>obj@GRanges</code>).
 It also contains metadata associated with each cell, if provided.</p>
 <p>For example, a simple heatmap can be created using the following:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co">#Set color scale</span></span>
+<span><span class="va">heatmap.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">heatmap.colors</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Blue"</span>,<span class="st">"White"</span>,<span class="st">"Red"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
+<span>                                         heatmap.colors <span class="op">=</span> <span class="va">heatmap.colors</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">heatmap.result</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Plot"     "PlotData"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">heatmap.result</span><span class="op">$</span><span class="va">PlotData</span><span class="op">)</span><span class="op">)</span></span>
@@ -157,7 +162,8 @@ chr7 and chrX, as seen below:</p>
 <span>                                         gr <span class="op">=</span> <span class="va">plot.regions</span>,</span>
 <span>                                         annotations <span class="op">=</span> <span class="st">"Sample"</span>,</span>
 <span>                                         show.annotation.name <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                                         annotation.colors <span class="op">=</span> <span class="va">annotation.colors</span><span class="op">)</span></span></code></pre></div>
+<span>                                         annotation.colors <span class="op">=</span> <span class="va">annotation.colors</span>,</span>
+<span>                                         heatmap.colors <span class="op">=</span> <span class="va">heatmap.colors</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="1b_heatmap.png" alt="Example 1b. Heatmap of chr7 and chrX, with sample annotation" width="50%"><p class="caption">
 Example 1b. Heatmap of chr7 and chrX, with sample annotation
@@ -185,7 +191,8 @@ the plot will show the number of cells described by each group.</p>
 <span></span>
 <span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                         group <span class="op">=</span> <span class="st">"KClusters"</span>,</span>
-<span>                                         annotation.colors <span class="op">=</span> <span class="va">annotation.colors</span><span class="op">)</span></span></code></pre></div>
+<span>                                         annotation.colors <span class="op">=</span> <span class="va">annotation.colors</span>,</span>
+<span>                                         heatmap.colors <span class="op">=</span> <span class="va">heatmap.colors</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="1c_heatmap.png" alt="Example 1c. Heatmap with pre-specified clusters" width="100%"><p class="caption">
 Example 1c. Heatmap with pre-specified clusters
@@ -228,7 +235,9 @@ our data.</p>
 <span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                         group <span class="op">=</span> <span class="st">"DynamicKClusters"</span>,</span>
 <span>                                         secondary.group <span class="op">=</span> <span class="st">"Sample"</span>,</span>
-<span>                                         post.plot.mod.fun <span class="op">=</span> <span class="va">custom.func</span><span class="op">)</span></span></code></pre></div>
+<span>                                         post.plot.mod.fun <span class="op">=</span> <span class="va">custom.func</span>,</span>
+<span>                                         heatmap.colors <span class="op">=</span> <span class="va">heatmap.colors</span>,</span>
+<span>                                         border <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="1d_heatmap.png" alt="Example 1d. Heatmap with dynamic clusters" width="100%"><p class="caption">
 Example 1d. Heatmap with dynamic clusters

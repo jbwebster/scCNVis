@@ -178,53 +178,33 @@ those values with custom colors.</p>
 Example 1b. Frequency Plot, pseudobulked subclones
 </p>
 </div>
-<p>As you can see, with our 4 subclones and looser thresholding
-criteria, we now see greater variety in our frequency plot.</p>
-<p>Together with the <code>secondary.group</code> parameter, we can also
-use the <code>data.func</code> to introducing a secondary grouping to
-our data. This is done by adding a new column to the data.frame during
-the <code>data.func</code> modification and providing the name of that
-new column to the <code>secondary.group</code>. In this case, we will
-change our <code>custom.data.func</code> to use a threshold of 1sd (the
-same as the default function used by <code><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot()</a></code>),
-but we will label the first half of the data as “Phenotype 1” and the
-second half as “Phenotype 2”. This is an arbitrary example, but if you
-have real phenotypic (or other data) that can be mapped to the ‘name’
-column of the data passed to the <code>data.func</code>, you could
-supply that instead.</p>
-<p>Note that in our <code>custom.data.func</code> below, the input data
-is sorted by genomic region, so by assigning the first half of the data
-frame to “Phenotype 1”, we expect that all copy number alterations in
-Phenotype 1 will be limited to the first half of the genome, while
-Phenotype 2 will only have alterations in the second half of the
-genome.</p>
+<p>In some cases, it may be desirable to group values together. In the
+below hypothetical example, we say that our data comes from 10 samples,
+5 of which have “Phenotype A” and 5 of which have “Phenotype B”. Gains
+and losses are calculated for each sample, but frequencies and plot
+groupings are done based on samples that match each phenotype.</p>
+<p>When using the <code>secondary.group</code> parameter, it is
+important to make sure that each value in <code>group</code> overlaps
+with exactly one value in the <code>secondary.group</code>. Otherwise,
+averages and frequencies may be distorted.</p>
+<p>In this arbitrary example, we see that both phenotypes frequently
+have gain on chromosomes 4-8 and 13, but other chromosomes have distinct
+profiles.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co">#Custom data function that defines thresholds as mean +/- 1sd</span></span>
-<span><span class="co">#Also adds arbitrary phenotype data</span></span>
-<span><span class="va">custom.data.func</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="va">sd.value</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">value</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>      <span class="va">mean.value</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">value</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span>      <span class="co">#Any value &gt; mean + 1sd will be considered a gain</span></span>
-<span>      <span class="va">data</span><span class="op">[</span><span class="va">data</span><span class="op">$</span><span class="va">value</span> <span class="op">&gt;</span> <span class="va">mean.value</span> <span class="op">+</span> <span class="va">sd.value</span>,<span class="st">"value"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span> <span class="co">#Gain == 2</span></span>
-<span>      <span class="co">#Any value &lt; mean - 1sd will be considered a loss</span></span>
-<span>      <span class="va">data</span><span class="op">[</span><span class="va">data</span><span class="op">$</span><span class="va">value</span> <span class="op">&lt;</span> <span class="va">mean.value</span> <span class="op">-</span> <span class="va">sd.value</span>,<span class="st">"value"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span> <span class="co">#Loss == 0</span></span>
-<span>      <span class="co">#All other values will be considered neutral</span></span>
-<span>      <span class="va">data</span><span class="op">[</span><span class="va">data</span><span class="op">$</span><span class="va">value</span> <span class="op">!=</span> <span class="fl">2</span> <span class="op">&amp;</span> <span class="va">data</span><span class="op">$</span><span class="va">value</span> <span class="op">!=</span> <span class="fl">0</span>,<span class="st">"value"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co">#Neutral == 1</span></span>
-<span>      </span>
-<span>      <span class="co">#Add arbitrary phenotypic data</span></span>
-<span>      <span class="va">total_rows</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span>      <span class="va">midpoint</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">total_rows</span> <span class="op">*</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span>      <span class="va">data</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">midpoint</span>,<span class="st">"Phenotype"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"Phenotype 1"</span></span>
-<span>      <span class="va">data</span><span class="op">[</span><span class="va">midpoint</span><span class="op">:</span><span class="va">total_rows</span>,<span class="st">"Phenotype"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"Phenotype 2"</span></span>
-<span>      <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
-<span>    <span class="op">}</span></span>
+<code class="sourceCode R"><span><span class="co">#Recreate our plot object, but change our example meta data</span></span>
+<span><span class="va">new.meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Sample"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>,</span>
+<span>                      Phenotype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Phenotype A"</span>, <span class="fl">500</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Phenotype B"</span>, <span class="fl">500</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">new.meta</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">example.cells</span></span>
 <span></span>
-<span><span class="co">#Again, using the DynamicKClusters metadata added previously</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">example.matrix</span>,</span>
+<span>                                 <span class="va">example.cells</span>,</span>
+<span>                                 <span class="va">example.granges</span>,</span>
+<span>                                 <span class="va">new.meta</span><span class="op">)</span></span>
+<span></span>
+<span></span>
 <span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
-<span>                                        group <span class="op">=</span> <span class="st">"DynamicKClusters"</span>,</span>
-<span>                                        secondary.group <span class="op">=</span> <span class="st">"Phenotype"</span>,</span>
-<span>                                        data.func <span class="op">=</span> <span class="va">custom.data.func</span><span class="op">)</span></span>
+<span>                                        group <span class="op">=</span> <span class="st">"Sample"</span>,</span>
+<span>                                        secondary.group <span class="op">=</span> <span class="st">"Phenotype"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
 <div class="figure">

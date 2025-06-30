@@ -42,7 +42,12 @@ as `obj@Matrix`) and the associated GenomicRanges::GRanges object (accessible as
 For example, a simple heatmap can be created using the following:
 
 ```{r}
-heatmap.result <- scCNVis::makeSCHeatmap(obj)
+#Set color scale
+heatmap.colors <- c(0,1,2)
+names(heatmap.colors) <- c("Blue","White","Red")
+
+heatmap.result <- scCNVis::makeSCHeatmap(obj,
+                                         heatmap.colors = heatmap.colors)
 print(names(heatmap.result))
 print(names(heatmap.result$PlotData))
 ```
@@ -90,7 +95,8 @@ heatmap.result <- scCNVis::makeSCHeatmap(obj,
                                          gr = plot.regions,
                                          annotations = "Sample",
                                          show.annotation.name = TRUE,
-                                         annotation.colors = annotation.colors)
+                                         annotation.colors = annotation.colors,
+                                         heatmap.colors = heatmap.colors)
 ```
 ```{r echo=FALSE, fig.cap="Example 1b. Heatmap of chr7 and chrX, with sample annotation", out.width = '50%'}
 knitr::include_graphics("1b_heatmap.png")
@@ -119,7 +125,8 @@ annotation.colors <- c("blue", "yellow")
 
 heatmap.result <- scCNVis::makeSCHeatmap(obj,
                                          group = "KClusters",
-                                         annotation.colors = annotation.colors)
+                                         annotation.colors = annotation.colors,
+                                         heatmap.colors = heatmap.colors)
 ```
 ```{r echo=FALSE, fig.cap="Example 1c. Heatmap with pre-specified clusters", out.width = '100%'}
 knitr::include_graphics("1c_heatmap.png")
@@ -159,7 +166,9 @@ custom.func <- function(data) {
 heatmap.result <- scCNVis::makeSCHeatmap(obj,
                                          group = "DynamicKClusters",
                                          secondary.group = "Sample",
-                                         post.plot.mod.fun = custom.func)
+                                         post.plot.mod.fun = custom.func,
+                                         heatmap.colors = heatmap.colors,
+                                         border = TRUE)
 ```
 ```{r echo=FALSE, fig.cap="Example 1d. Heatmap with dynamic clusters", out.width = '100%'}
 knitr::include_graphics("1d_heatmap.png")

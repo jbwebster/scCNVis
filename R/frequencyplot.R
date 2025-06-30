@@ -8,7 +8,7 @@
 #' @param group Metadata column. Average signal will be calculated per group and then called as loss/neutral/gain. Default = "Sample"
 #' @param gain.color Color to represent gain frequency. Default = 'cornflowerblue'
 #' @param loss.color Color to represent loss frequency. Default = 'deeppink'
-#' @param secondary.group Secondary group for plot groupings. Must use a column introduced by data.fun. See FrequencyPlot example on Github for details. Default = NULL
+#' @param secondary.group Secondary group for plot groupings. Each value in group, should overlap 1 and only 1 secondary grouping. Default = NULL
 #' @param data.func A function for defining thresholds of loss(0)/neutral(1)/gain(2) and otherwise manipulating plot data. If not provided, mean +/- sd will be used for thresholding. See FrequencyPlot example on Github for examples. Default = NULL
 #' @param remove.chr.prefix Remove 'chr' prefix of chromosome names. Default = TRUE
 #' @param verbose Verbose logging. Default = FALSE
@@ -92,14 +92,25 @@ makeFrequencyPlot <- function(obj,
     stop("data.func output should not remove or rename the columns of the dataframe it is provided")
   }
   if (!is.null(secondary.group)) {
-    if(!(secondary.group %in% colnames(plot.data.long))) {
-      stop("If provided, secondary.group must be a column name from the output data.frame in the (required) thresh.func function")
+    if(!(secondary.group %in% colnames(obj@Meta))) {
+      stop("If provided, secondary.group must be a column in obj@Meta")
     }
-    grouped <- plot.data.long %>%
-      dplyr::group_by(chrm,middle,pos.index,.data[[secondary.group]]) %>%
+    tmp.df <- data.frame(name = obj@Meta[,group],
+                         secondary = obj@Meta[,secondary.group])
+    tmp.df <- tmp.df[!duplicated(tmp.df),]
+    merged <- merge(plot.data.long,tmp.df,by="name")
+    
+    grouped <- merged %>%
+      dplyr::group_by(chrm,middle,pos.index,secondary) %>%
       dplyr::summarise(n_groups = length(unique(name)),
                        n_gain = sum(value == 2),
                        n_loss = sum(value == 0))
+    
+    #grouped <- plot.data.long %>%
+    #  dplyr::group_by(chrm,middle,pos.index,.data[[secondary.group]]) %>%
+    #  dplyr::summarise(n_groups = length(unique(name)),
+    #                   n_gain = sum(value == 2),
+    #                   n_loss = sum(value == 0))
   } else {
     grouped <- plot.data.long %>%
       dplyr::group_by(chrm,middle,pos.index) %>%
@@ -140,7 +151,7 @@ makeFrequencyPlot <- function(obj,
                            fill=loss.color) +
       ggplot2::geom_hline(yintercept=c(-1,1),color='black') +
       ggplot2::scale_y_continuous(limits = c(-1, 1), expand = c(0, 0)) +
-      ggplot2::facet_grid(as.formula(paste(secondary.group, "~ chrm")), scales = 'free_x', space = 'free_x') +
+      ggplot2::facet_grid(secondary ~ chrm, scales = 'free_x', space = 'free_x') +
       ggplot2::labs(x='Chromosome',y='Frequency of Gain/Loss') +
       ggplot2::theme_classic() +
       ggplot2::theme(panel.spacing.x = ggplot2::unit(0, "lines"),

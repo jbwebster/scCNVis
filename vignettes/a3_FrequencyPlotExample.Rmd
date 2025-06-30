@@ -104,51 +104,34 @@ fp.result <- scCNVis::makeFrequencyPlot(obj,
 knitr::include_graphics("1b_frequencyplot.png")
 ```
 
-As you can see, with our 4 subclones and looser thresholding criteria, we now see
-greater variety in our frequency plot.
+In some cases, it may be desirable to group values together. In the below hypothetical example,
+we say that our data comes from 10 samples, 5 of which have "Phenotype A" and 5 of which
+have "Phenotype B". Gains and losses are calculated for each sample, but frequencies and plot
+groupings are done based on samples that match each phenotype. 
 
-Together with the `secondary.group` parameter, we can also use the `data.func` to
-introducing a secondary grouping to our data. This is done by adding a new column
-to the data.frame during the `data.func` modification and providing the name of that
-new column to the `secondary.group`. In this case, we will change our `custom.data.func`
-to use a threshold of 1sd (the same as the default function used by `makeFrequencyPlot()`),
-but we will label the first half of the data as "Phenotype 1" and the second half
-as "Phenotype 2". This is an arbitrary example, but if you have real phenotypic
-(or other data) that can be mapped to the 'name' column of the data passed to the `data.func`,
-you could supply that instead.
+When using the `secondary.group` parameter, it is important to make sure that each value in `group`
+overlaps with exactly one value in the `secondary.group`. Otherwise, averages and frequencies
+may be distorted.
 
-Note that in our `custom.data.func` below, the input data is sorted by genomic region,
-so by assigning the first half of the data frame to "Phenotype 1", we expect that
-all copy number alterations in Phenotype 1 will be limited to the first half of the genome,
-while Phenotype 2 will only have alterations in the second half of the genome.
+In this arbitrary example, we see that both phenotypes frequently have gain on 
+chromosomes 4-8 and 13, but other chromosomes have distinct profiles.
+
 
 ```{r}
+#Recreate our plot object, but change our example meta data
+new.meta <- data.frame(Sample = rep(paste0("Sample", LETTERS[1:10]), each = 100),
+                      Phenotype = c(rep("Phenotype A", 500), rep("Phenotype B", 500)))
+rownames(new.meta) <- example.cells
 
-#Custom data function that defines thresholds as mean +/- 1sd
-#Also adds arbitrary phenotype data
-custom.data.func <- function(data) {
-      sd.value <- sd(data$value, na.rm = TRUE)
-      mean.value <- mean(data$value, na.rm = TRUE)
-      #Any value > mean + 1sd will be considered a gain
-      data[data$value > mean.value + sd.value,"value"] <- 2 #Gain == 2
-      #Any value < mean - 1sd will be considered a loss
-      data[data$value < mean.value - sd.value,"value"] <- 0 #Loss == 0
-      #All other values will be considered neutral
-      data[data$value != 2 & data$value != 0,"value"] <- 1 #Neutral == 1
-      
-      #Add arbitrary phenotypic data
-      total_rows = nrow(data)
-      midpoint = round(total_rows * 0.5)
-      data[1:midpoint,"Phenotype"] <- "Phenotype 1"
-      data[midpoint:total_rows,"Phenotype"] <- "Phenotype 2"
-      return(data)
-    }
+obj <- scCNVis::createPlotObject(example.matrix,
+                                 example.cells,
+                                 example.granges,
+                                 new.meta)
 
-#Again, using the DynamicKClusters metadata added previously
+
 fp.result <- scCNVis::makeFrequencyPlot(obj,
-                                        group = "DynamicKClusters",
-                                        secondary.group = "Phenotype",
-                                        data.func = custom.data.func)
+                                        group = "Sample",
+                                        secondary.group = "Phenotype")
 
 #scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
 ```
