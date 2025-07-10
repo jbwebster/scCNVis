@@ -98,6 +98,8 @@ makeFrequencyPlot <- function(obj,
     tmp.df <- data.frame(name = obj@Meta[,group],
                          secondary = obj@Meta[,secondary.group])
     tmp.df <- tmp.df[!duplicated(tmp.df),]
+    nm <- tmp.df$name
+    tmp.df$name <- make.names(nm) #Ensure they get validated the same was as plot.data.long was
     merged <- merge(plot.data.long,tmp.df,by="name")
     
     grouped <- merged %>%
