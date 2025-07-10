@@ -135,9 +135,9 @@ makeFrequencyPlot <- function(obj,
   # Plot
   if(is.null(secondary.group)) {
     p <- ggplot2::ggplot(grouped) +
-      ggplot2::geom_ribbon(ggplot2::aes(ymin=0,ymax=FreqGain,x=middle),
+      ggplot2::geom_ribbon(ggplot2::aes(ymin=0,ymax=FreqGain,x=pos.index),
                            fill=gain.color) +
-      ggplot2::geom_ribbon(ggplot2::aes(ymin=FreqLoss,ymax=0,x=middle),
+      ggplot2::geom_ribbon(ggplot2::aes(ymin=FreqLoss,ymax=0,x=pos.index),
                            fill=loss.color) +
       ggplot2::facet_grid( ~ chrm, scales = 'free_x', space = 'free_x') +
       ggplot2::labs(x='Chromosome',y='Frequency of Gain/Loss') +
@@ -147,9 +147,9 @@ makeFrequencyPlot <- function(obj,
                      axis.ticks.x = ggplot2::element_blank())
   } else {
     p <- ggplot2::ggplot(grouped) +
-      ggplot2::geom_ribbon(ggplot2::aes(ymin=0,ymax=FreqGain,x=middle),
+      ggplot2::geom_ribbon(ggplot2::aes(ymin=0,ymax=FreqGain,x=pos.index),
                            fill=gain.color) +
-      ggplot2::geom_ribbon(ggplot2::aes(ymin=FreqLoss,ymax=0,x=middle),
+      ggplot2::geom_ribbon(ggplot2::aes(ymin=FreqLoss,ymax=0,x=pos.index),
                            fill=loss.color) +
       ggplot2::geom_hline(yintercept=c(-1,1),color='black') +
       ggplot2::scale_y_continuous(limits = c(-1, 1), expand = c(0, 0)) +
