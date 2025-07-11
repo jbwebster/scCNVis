@@ -155,11 +155,10 @@ Example 1b. Lineplot grouped by sample
 </p>
 </div>
 <p>Of course, other metadata can be used as well. Here, we perform the
-same clustering using in the Heatmap example and plot each group and
-plot the resulting clusters. Because our earlier line plot shows great
-variability on chrX, we could choose to limit our plot to that
-chromosome. Again, we may choose to add additional customizations to the
-output plot.</p>
+same clustering used in the Heatmap example and plot the resulting
+clusters. Because our earlier line plot shows great variability on chrX,
+we could choose to limit our plot to that chromosome. Again, we may
+choose to add additional customizations to the output plot.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Calculate distance matrix values</span></span>
 <span><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu">parallelDist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/parallelDist/man/parDist.html" class="external-link">parallelDist</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">Matrix</span><span class="op">)</span></span>
@@ -236,6 +235,9 @@ minimum subclone value.</p>
 <span>                                     granges <span class="op">=</span> <span class="va">example.granges</span>,</span>
 <span>                                     meta <span class="op">=</span> <span class="va">agg.meta</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co">#Because the agg.obj only has 4 rows (describing the 4 subclones)</span></span>
+<span><span class="co">#and we used method = "range", the resulting plot will show</span></span>
+<span><span class="co">#how much difference there is between the 4 subclones within each genomic bin</span></span>
 <span><span class="va">lineplot.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeLinePlot.html">makeLinePlot</a></span><span class="op">(</span><span class="va">agg.obj</span>,</span>
 <span>                                         method <span class="op">=</span> <span class="st">"range"</span><span class="op">)</span></span>
 <span></span>

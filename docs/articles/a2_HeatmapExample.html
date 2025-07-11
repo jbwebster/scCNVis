@@ -156,6 +156,9 @@ chr7 and chrX, as seen below:</p>
 <span></span>
 <span><span class="co">#If using a basic annotation as shown here and you want to specify colors,</span></span>
 <span><span class="co">#it should be provided as a named list</span></span>
+<span><span class="co">#The data here should be consistent with whatever metadata was added to the</span></span>
+<span><span class="co">#scCNVis object. In this case, our 'Sample' column says all cells came</span></span>
+<span><span class="co">#from either 'SampleA' or 'SampleB'</span></span>
 <span><span class="va">annotation.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleA"</span> <span class="op">=</span> <span class="st">"red"</span>, <span class="st">"SampleB"</span> <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
@@ -204,7 +207,10 @@ In this example, I use the dynamicTreeCut package to dynamically cluster
 the cells and group the heatmap using the resulting clusters. I am
 interested in what proportion of each dynamic cluster comes from each
 sample, so I set the <code>secondary.group</code> as the
-<code>Sample</code> metadata column.</p>
+<code>Sample</code> metadata column. This will create barplots showing
+the percent of cells within each cluster that came from each sample -
+this is useful if you suspect that some clusters are sample-specific
+while others are shared across samples.</p>
 <p><code><a href="../reference/makeSCHeatmap.html">makeSCHeatmap()</a></code> also accepts custom functions that can
 be applied to the plot data. The custom function should accept an input
 <code>data.frame</code> and return a <code>data.frame</code> with the

@@ -149,14 +149,23 @@ this customization is shown below.
 
 fp.result <- scCNVis::makeFrequencyPlot(obj)
 
+#I have selected a random gene/location here, but manual inspection
+#of fp.result$PlotData can be done to find the "pos.index" value
+#that overlaps with the location of genes of interest and used to add
+#marker gene labels
+pos.index.example.values <- c(500, 1200)
+marker.gene.names <- c("GeneA", "GeneB")
+
 final.plot <- fp.result$Plot +
-  ggplot2::geom_hline(yintercept = 0, color='black') +
+  ggplot2::scale_x_continuous(breaks = pos.index.example.values,
+                              labels = marker.gene.names) +
   ggplot2::labs(x="Genome",
                 y="Frequency of Alteration",
                 title="Genome Alteration Frequencies") +
-  ggplot2::theme_minimal() +
-  ggplot2::theme(axis.text.x = ggplot2::element_blank(),
-                     axis.ticks.x = ggplot2::element_blank())
+  ggplot2::theme_bw() +
+  ggplot2::theme(panel.spacing.x = ggplot2::unit(0.1, "lines"),
+                 panel.spacing.y = ggplot2::unit(1, "lines"),
+                 plot.title = ggplot2::element_text(hjust = 0.5))
 
 #fp.result$Plot <- final.plot
 #scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")

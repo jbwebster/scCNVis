@@ -66,6 +66,9 @@ makeLinePlot <- function(obj,
   res.mgr <- NULL
   for (curr.group in unique(plot.groups)) {
     cells <- plot.groups[plot.groups==curr.group]
+    if(length(cells) <= 1) {
+      stop(paste0(curr.group, " has <2 cells. All groups must have >=2 cells, at minimum."))
+    }
     .verboseLog(verbose, paste0("Calculating moving average for group: ", curr.group, " using window size: ", window.size))
     curr.data <- plot.data[names(cells),]
     if (method == "mean") {

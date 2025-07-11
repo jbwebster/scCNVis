@@ -17,7 +17,7 @@ devtools::load_all(".")
 
 scCNVis is an R package for exploring single-cell copy number data. All plotting
 functions take as input an `scCNVis` object. Example data has been provided
-to show how this is done. 
+to show how this is done, as described below:
 
 First, is the example input matrix containing the copy number values:
 
@@ -72,5 +72,5 @@ obj <- scCNVis::createPlotObject(input.matrix = matrix,
 
 ```
 
-Documentation articles about making frequency plots, heatmaps and line plots
+See the additional documentation articles about making frequency plots, heatmaps and line plots for examples of how to use the `scCNVis` object.
 show how to use this object to generate plots.

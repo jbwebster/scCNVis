@@ -112,7 +112,10 @@
 <span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="va">example.meta</span></span>
 <span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">input.matrix</span>, <span class="va">cell.names</span>, <span class="va">granges</span>, <span class="va">meta</span><span class="op">)</span></span></code></pre>
 <p>The resulting <code>obj</code> output can then be passed into any of the available plotting functions. For example:</p>
-<pre><code><span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span></code></pre>
+<pre><code><span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#If using RStudio, you can view the plot in the IDE:</span></span>
+<span><span class="va">heatmap.result</span><span class="op">$</span><span class="va">Plot</span></span></code></pre>
 <p>The output of the plotting functions is a list with two items. The first is the <code>Plot</code> and the second is the <code>PlotData</code> that was used to make the plot in case you wish to create your own version of the plot or inspect the data more thoroughly. If you wish to simply export the plot, it can be done using the wrapper function:</p>
 <pre><code><span><span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="reference/saveCustomPlot.html">saveCustomPlot</a></span><span class="op">(</span><span class="va">heatmap.result</span>, <span class="st">"~/path/to/heatmap.png"</span><span class="op">)</span></span></code></pre>
 </div>

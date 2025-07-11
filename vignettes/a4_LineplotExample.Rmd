@@ -84,7 +84,7 @@ knitr::include_graphics("1b_lineplot.png")
 ```
 
 Of course, other metadata can be used as well. Here, we perform the same
-clustering using in the Heatmap example and plot each group and plot the resulting
+clustering used in the Heatmap example and plot the resulting
 clusters. Because our earlier line plot shows great variability on chrX,
 we could choose to limit our plot to that chromosome. Again, we may choose
 to add additional customizations to the output plot.
@@ -161,6 +161,9 @@ agg.obj <- scCNVis::createPlotObject(subclone.data,
                                      granges = example.granges,
                                      meta = agg.meta)
 
+#Because the agg.obj only has 4 rows (describing the 4 subclones)
+#and we used method = "range", the resulting plot will show
+#how much difference there is between the 4 subclones within each genomic bin
 lineplot.result <- scCNVis::makeLinePlot(agg.obj,
                                          method = "range")
 

@@ -89,6 +89,9 @@ plot.regions <- example.granges[example.granges@seqnames == "chr7" |
 
 #If using a basic annotation as shown here and you want to specify colors,
 #it should be provided as a named list
+#The data here should be consistent with whatever metadata was added to the
+#scCNVis object. In this case, our 'Sample' column says all cells came
+#from either 'SampleA' or 'SampleB'
 annotation.colors <- list(Sample = c("SampleA" = "red", "SampleB" = "blue"))
 
 heatmap.result <- scCNVis::makeSCHeatmap(obj,
@@ -137,7 +140,9 @@ as sample of origin, phenotype data, or dynamic clusters. In this example,
 I use the dynamicTreeCut package to dynamically cluster the cells and group
 the heatmap using the resulting clusters. I am interested in what proportion
 of each dynamic cluster comes from each sample, so I set the `secondary.group`
-as the `Sample` metadata column.
+as the `Sample` metadata column. This will create barplots showing the percent
+of cells within each cluster that came from each sample - this is useful if you
+suspect that some clusters are sample-specific while others are shared across samples.
 
 `makeSCHeatmap()` also accepts custom functions that can be applied to the plot
 data. The custom function should accept an input `data.frame` and return a

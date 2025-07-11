@@ -64,6 +64,9 @@ functions. For example:
 
 ```
 heatmap.result <- scCNVis::makeSCHeatmap(obj)
+
+#If using RStudio, you can view the plot in the IDE:
+heatmap.result$Plot
 ```
 
 The output of the plotting functions is a list with two items. The first is the
