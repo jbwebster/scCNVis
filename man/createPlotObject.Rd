@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{createPlotObject}
 \alias{createPlotObject}
-\title{Create a SCCNVis object for plotting}
+\title{Create a scCNVis object for plotting}
 \usage{
 createPlotObject(input.matrix, cell.names, granges, meta)
 }
@@ -16,7 +16,7 @@ createPlotObject(input.matrix, cell.names, granges, meta)
 \item{meta}{Data.frame of meta data. Rownames should be cell.names. At a minimum, it must include a "Sample" column.}
 }
 \value{
-A list object containing 3 elements ("Matrix", "GRanges" and "Meta")
+A scCNVisObject containing 3 elements ("Matrix", "GRanges" and "Meta")
 }
 \description{
 This function creates a basic object containing the information needed

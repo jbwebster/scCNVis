@@ -13,6 +13,7 @@ makeSCHeatmap(
   secondary.group = NULL,
   show.annotation.name = FALSE,
   add.noise = T,
+  border = FALSE,
   post.plot.mod.fun = NULL,
   heatmap.colors = NULL,
   legend.title = "Value",
@@ -36,6 +37,8 @@ makeSCHeatmap(
 \item{show.annotation.name}{Show annotation names. Does nothing if annotations is NULL. Default == NULL}
 
 \item{add.noise}{Add minor noise to the data for clustering purposes. The visualization will not include the noise. Default = TRUE}
+
+\item{border}{Draw borders. Default = FALSE}
 
 \item{post.plot.mod.fun}{A function to apply to plot data before final plotting. Default == NULL}
 

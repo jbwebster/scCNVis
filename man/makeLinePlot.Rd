@@ -33,7 +33,7 @@ makeLinePlot(
 
 \item{group.label}{The label to be used for the groups. Default = ""}
 
-\item{method}{Method for aggregating values across a group. Should be "mean", "median" or "range". Default = "mean"}
+\item{method}{Method for aggregating values across a group. Should be "mean", "median", "sd" or "range". Default = "mean"}
 
 \item{plot.average.of.groups}{Logical. If TRUE, plot each cluster individually and an additional line representing the average of each cluster. Default = FALSE}
 

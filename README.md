@@ -45,13 +45,14 @@ scCNVis object, you need:
 1. A matrix (rows = cells, columns = regions) with copy number values
 2. A list of cell names (should be the same length as nrows(matrix))
 3. A GenomicRanges::GRanges object describing the columns of the matrix
-4. A metadata dataframe that minimally has rownames as cell names and a column named "Sample"
+4. A metadata data.frame that minimally has rownames as cell names and a column named "Sample"
 
 You can start with the provided example data to get a sense of what these
 inputs look like:
 
 ```
 library(scCNVis)
+#Load the data that comes with scCNVis
 input.matrix <- example.matrix
 cell.names <- example.cells
 granges <- example.granges
@@ -59,7 +60,17 @@ meta <- example.meta
 obj <- scCNVis::createPlotObject(input.matrix, cell.names, granges, meta)
 ```
 
-The resulting `obj` output can then be passed into any of the available plotting
+Alternatively, you can create a `scCNVisObject` directly from an infercnv object,
+by using a helper function:
+
+```
+library(scCNVis)
+#Load the infercnv object that comes with scCNVis
+inferncv.obj <- example.infercnv.obj
+obj <- scCNVis::createPlotObjectFromInfercnv(infercnv.obj, "Example.Sample")
+```
+
+The resulting `scCNVisObject` output can then be passed into any of the available plotting
 functions. For example:
 
 ```

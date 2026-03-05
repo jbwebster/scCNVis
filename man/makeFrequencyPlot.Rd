@@ -27,7 +27,7 @@ makeFrequencyPlot(
 
 \item{loss.color}{Color to represent loss frequency. Default = 'deeppink'}
 
-\item{secondary.group}{Secondary group for plot groupings. Must use a column introduced by data.fun. See FrequencyPlot example on Github for details. Default = NULL}
+\item{secondary.group}{Secondary group for plot groupings. Each value in group, should overlap 1 and only 1 secondary grouping. Default = NULL}
 
 \item{data.func}{A function for defining thresholds of loss(0)/neutral(1)/gain(2) and otherwise manipulating plot data. If not provided, mean +/- sd will be used for thresholding. See FrequencyPlot example on Github for examples. Default = NULL}
 

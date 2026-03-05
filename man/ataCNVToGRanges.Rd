@@ -14,6 +14,6 @@ GenomicRanges::GRanges object
 }
 \description{
 This functions converts the column names provided by AtaCNV output into
-a GenomicRanges::GRanges object for use in creating a SCCNVis object.
+a GenomicRanges::GRanges object for use in creating a scCNVis object.
 Adapted from Aelita-Stone/AtaCNV
 }
