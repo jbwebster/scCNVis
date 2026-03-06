@@ -102,16 +102,22 @@
 <li>A matrix (rows = cells, columns = regions) with copy number values</li>
 <li>A list of cell names (should be the same length as nrows(matrix))</li>
 <li>A GenomicRanges::GRanges object describing the columns of the matrix</li>
-<li>A metadata dataframe that minimally has rownames as cell names and a column named “Sample”</li>
+<li>A metadata data.frame that minimally has rownames as cell names and a column named “Sample”</li>
 </ol>
 <p>You can start with the provided example data to get a sense of what these inputs look like:</p>
 <pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scCNVis</span><span class="op">)</span></span>
+<span><span class="co">#Load the data that comes with scCNVis</span></span>
 <span><span class="va">input.matrix</span> <span class="op">&lt;-</span> <span class="va">example.matrix</span></span>
 <span><span class="va">cell.names</span> <span class="op">&lt;-</span> <span class="va">example.cells</span></span>
 <span><span class="va">granges</span> <span class="op">&lt;-</span> <span class="va">example.granges</span></span>
 <span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="va">example.meta</span></span>
 <span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">input.matrix</span>, <span class="va">cell.names</span>, <span class="va">granges</span>, <span class="va">meta</span><span class="op">)</span></span></code></pre>
-<p>The resulting <code>obj</code> output can then be passed into any of the available plotting functions. For example:</p>
+<p>Alternatively, you can create a <code>scCNVisObject</code> directly from an infercnv object, by using a helper function:</p>
+<pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scCNVis</span><span class="op">)</span></span>
+<span><span class="co">#Load the infercnv object that comes with scCNVis</span></span>
+<span><span class="va">inferncv.obj</span> <span class="op">&lt;-</span> <span class="va">example.infercnv.obj</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="reference/createPlotObjectFromInfercnv.html">createPlotObjectFromInfercnv</a></span><span class="op">(</span><span class="va">infercnv.obj</span>, <span class="st">"Example.Sample"</span><span class="op">)</span></span></code></pre>
+<p>The resulting <code>scCNVisObject</code> output can then be passed into any of the available plotting functions. For example:</p>
 <pre><code><span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#If using RStudio, you can view the plot in the IDE:</span></span>
@@ -159,7 +165,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>

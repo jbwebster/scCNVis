@@ -2,7 +2,7 @@
 title: "Lineplot Example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{LineplotExample}
+  %\VignetteIndexEntry{Lineplot Example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,8 +19,7 @@ Although heatmaps are one of the most common ways to visualize single-cell copy
 number results, the combination of large genomes, small genomic bins and drastic
 genomic alterations can make it difficult to observe subtle differences.
 
-A simple line plot can be an easy to way to quickly visualize different regions of the genome and visualize the differences in specific regions. scCNVis provides a simple line plot method that returns a ggplot2 object, which can be easily customized to fit the user's exact needs. We begin with the example data provided (see the Heatmaps
-example for an intro to this data):
+A simple line plot can be an easy to way to quickly visualize different regions of the genome and visualize the differences in specific regions. scCNVis provides a simple line plot method that returns a ggplot2 object, which can be easily customized to fit the user's exact needs. We begin with the example data provided:
 
 ```{r setup}
 library(scCNVis)
@@ -32,44 +31,36 @@ obj <- scCNVis::createPlotObject(example.matrix,
 lineplot.result <- scCNVis::makeLinePlot(obj)
 print(names(lineplot.result))
 ```
-
+```{r echo=FALSE, fig.cap="Example 1a. Lineplot", out.width = '100%'}
+knitr::include_graphics("1a_lineplot.png")
+```
 
 The output from `makeLinePlot` is an object with two items. `Plot` is a ggplot2
 plot that can be further customized as desired. `PlotData` is the data used to
 create the plot, in case the user wants to create their own visualization.
 
-Similar to the `scCNVis::makeSCHeatmap()` function, the outputs of the line plot
+The outputs of the line plot
 function can be saved using the provided helper function, or using any other
-method commonly used to save ggplot outputs, such as `ggsave`.
-
-```{r eval=FALSE}
-#Example manual method
-#ggplot2::ggsave("~/path/to/lineplot.png", lineplot.result$Plot)
-
-#Simple wrapper for convenience
-scCNVis::saveCustomPlot(lineplot.result, "/path/to/heatmap.png")
-```
-```{r echo=FALSE, fig.cap="Example 1a. Lineplot", out.width = '100%'}
-knitr::include_graphics("1a_lineplot.png")
-```
+method commonly used to save ggplot outputs, such as `ggplot2::ggsave(lineplot.result$Plot)`.
 
 Lineplots may be grouped by any column in the scCNVis object's metadata. The
 function also provides various other ways to customize the plot. Below is
-an example of how this can be done using the `Sample` column, and how the 
-output object can be further customized to the user's preferences:
+an example of how this can be done using the `Subclone` column available
+in our example data, and how the output object can be further customized to the
+user's preferences:
 
 ```{r}
 
-group.colors <- c("Blue","Red")
-names(group.colors) <- c("SampleA","SampleB")
+group.colors <- c("Blue","Red","Yellow","Green") #We have 4 subclones
+names(group.colors) <- unique(obj@Meta$Subclone)
 
 lineplot.result <- scCNVis::makeLinePlot(obj,
-                                        group = "Sample",
+                                        group = "Subclone",
                                         group.colors = group.colors
                                         )
 final.plot <- lineplot.result$Plot +
   ggplot2::labs(y="Copy Ratio",
-                title="Copy Ratio by Sample") +
+                title="Copy Ratio by Subclone") +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = ggplot2::element_blank(),
                        axis.ticks.x = ggplot2::element_blank())
@@ -90,25 +81,13 @@ we could choose to limit our plot to that chromosome. Again, we may choose
 to add additional customizations to the output plot.
 
 ```{r}
-#Calculate distance matrix values
-dist <- parallelDist::parallelDist(obj@Matrix)
-#Perform hierarchical clustering
-hc_re <- hclust(dist, method="ward.D2")
-#Dynamic clustering
-dynamic.kclusters <- dynamicTreeCut::cutreeDynamic(dendro = hc_re, 
-                                                   distM = as.matrix(dist),
-                                                   deepSplit = 0,
-                                                   pamRespectsDendro = TRUE
-                                                   )
-names(dynamic.kclusters) <- hc_re$labels
-obj <- scCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
 
 #Using the example.granges object that the scCNVis object was created from
-plot.regions <- example.granges[example.granges@seqnames == "chrX",]
+plot.regions <- example.granges[example.granges@seqnames == "chr4" | example.granges@seqnames == "chr7",]
 
 lineplot.result <- scCNVis::makeLinePlot(obj,
                                         gr = plot.regions,
-                                        group = "DynamicKClusters",
+                                        group = "Subclone",
                                         ylab = "Copy Ratio",
                                         show.x.ticks = TRUE
                                         )
@@ -132,53 +111,28 @@ Finally, `makeLinePlot` supports alternative metrics that may provide new insigh
 using the `method` parameter. By default, `method = mean` and the line plot shows
 the average value in each genomic bin for each group. Using `method = median` provides a 
 similar approach. However, `method = range` reports the range (max - minimum) for
-a group, showing the heterogeneity within the group. We can combine this with 
-grouped subclone data to measure the variability amongst subclones. The result
-is a line plot where the y-axis is a measure of variability between subclones,
-reported as the maximum subclone value minus the minimum subclone value.
+a group, showing the heterogeneity within the group and `method = sd` measures
+the standard deviation. In this case, the height of the line on the y-axis is measuring
+how much variability exists in that region. Since our previous plot showed large
+differences between subclones on chr4 and chr7, we might expect those regions
+to be some of the highest points on this plot.
 
 ```{r}
-#Recall that we have already added DynamicKClusters to the meta data of our object,
-#which grouped the cells into 4 subclones
 
-#makeSCHeatmap will aggregate the values from each subclone (see Heatmap example)
-heatmap.result <- scCNVis::makeSCHeatmap(obj, group = "DynamicKClusters")
-
-#Extract the aggregated data used for the heatmap plot
-subclone.data <- heatmap.result$PlotData$PlotData
-#Note that it has 4 rows, one for each subclone
-#and 1 column for each genomic bin
-print(dim(subclone.data))
-
-##Create a new scCNVis object with the aggregated data
-#Create metadata for the new object, with the required "Sample" column
-agg.meta <- data.frame(Sample = rep("Aggregated Subclones", 4))
-agg.cells <- c("Subclone 1","Subclone 2","Subclone 3", "Subclone 4")
-rownames(agg.meta) <- agg.cells
-
-agg.obj <- scCNVis::createPlotObject(subclone.data,
-                                     cell.names = agg.cells,
-                                     granges = example.granges,
-                                     meta = agg.meta)
-
-#Because the agg.obj only has 4 rows (describing the 4 subclones)
-#and we used method = "range", the resulting plot will show
-#how much difference there is between the 4 subclones within each genomic bin
-lineplot.result <- scCNVis::makeLinePlot(agg.obj,
-                                         method = "range")
+lineplot.result <- scCNVis::makeLinePlot(obj,
+                                         method = "sd")
 
 #Customize as desired
 final.plot <- lineplot.result$Plot +
   ggplot2::labs(x="Position",
-                y="Max - Min Subclone",
-                title="Subclone Variability") +
+                y="Copy Ratio Standard Deviation",
+                title="Sample Variability") +
   ggplot2::theme(legend.position="none")
 
 ```
 ```{r echo=FALSE, fig.cap="Example 1d. Lineplot ranges", out.width = '100%'}
 knitr::include_graphics("1d_lineplot.png")
 ```
-If you compare the above plot to plot 1b/1c from earlier, you can see that this
-plot is highlighting the regions where those previous plots were showing the
-greatest variability among groups. A similar approach can be achieved
-using `method = sd`.
+
+As expected, we see relatively high standard deviation scores on chr4 and chr7,
+suggesting that this sample has CN heterogeneity in those regions.

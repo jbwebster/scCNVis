@@ -2,7 +2,7 @@
 title: "Heatmap Example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{HeatmapExample}
+  %\VignetteIndexEntry{Heatmap Example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -42,7 +42,7 @@ as `obj@Matrix`) and the associated GenomicRanges::GRanges object (accessible as
 For example, a simple heatmap can be created using the following:
 
 ```{r}
-#Set color scale
+#Set custom color scale
 heatmap.colors <- c(0,1,2)
 names(heatmap.colors) <- c("Blue","White","Red")
 
@@ -79,55 +79,49 @@ scCNVis::saveCustomPlot(heatmap.result, "/path/to/heatmap.png")
 knitr::include_graphics("1a_heatmap.png")
 ```
 
-The heatmap could be further customized if metadata has been provided. At the same
+The heatmap can be annotated if metadata has been provided. If needed,
+metadata groupings can be added using the `addMetaData()` function. At the same
 time, we may choose to limit our plot to specific regions of interest. For this
-example, we may choose to focus only on chr7 and chrX, as seen below:
+example, we may choose to exclude chr22, as seen below:
 
 ```{r}
-plot.regions <- example.granges[example.granges@seqnames == "chr7" |
-                                  example.granges@seqnames == "chrX",]
+plot.regions <- example.granges[example.granges@seqnames != "chr22",]
 
 #If using a basic annotation as shown here and you want to specify colors,
 #it should be provided as a named list
 #The data here should be consistent with whatever metadata was added to the
-#scCNVis object. In this case, our 'Sample' column says all cells came
-#from either 'SampleA' or 'SampleB'
-annotation.colors <- list(Sample = c("SampleA" = "red", "SampleB" = "blue"))
+#scCNVis object. In this case, our example meta data had 4 subclones. 
+#This is optional.
+colors <- c("red","blue","green","yellow")
+names(colors) <- unique(obj@Meta$Subclone)
+annotation.colors <- list(Subclone = colors)
 
 heatmap.result <- scCNVis::makeSCHeatmap(obj,
                                          gr = plot.regions,
-                                         annotations = "Sample",
+                                         annotations = "Subclone",
                                          show.annotation.name = TRUE,
                                          annotation.colors = annotation.colors,
                                          heatmap.colors = heatmap.colors)
+#Save the result
+#scCNVis::saveCustomPlot(heatmap.result, "/path/to/heatmap.png")
 ```
-```{r echo=FALSE, fig.cap="Example 1b. Heatmap of chr7 and chrX, with sample annotation", out.width = '50%'}
+```{r echo=FALSE, fig.cap="Example 1b. Heatmap of chr7 and chrX, with sample annotation", out.width = '100%'}
 knitr::include_graphics("1b_heatmap.png")
 ```
 
-We can see that there are at least 2 seemingly distinct clusters present in our heatmap. 
 To simplify our heatmap, we may wish to present the data as a simple 
-average of those groups. To do so, we must add metadata to the scCNVis object
-to assign each cell to a group, then tell the makeSCHeatmap function which 
-metadata column to group the cells by. Whenever the heatmap is the result of
-grouped data, the right side of the plot will show the number of cells 
-described by each group.
+average of our subclones, rather than plotting every individual cell in those
+subclones. Whenever the heatmap is the result of grouped data, the right side of
+the plot will show the number of cells described by each group. 
 
 ```{r}
-#Calculate distance matrix values
-dist <- parallelDist::parallelDist(obj@Matrix)
-#Perform hierarchical clustering
-hc_re <- hclust(dist, method="ward.D2")
-#Split the hierarchical clustering into two groups
-kclusters <- cutree(hc_re, k = 2)
-obj <- scCNVis::addMetaData(obj, kclusters, colname = "KClusters")
 
 #If using a grouping method, the way to supply annotation colors changes.
 #In this case, they can simply be supplied as a character vector
-annotation.colors <- c("blue", "yellow")
+annotation.colors <- c("red","blue","green","yellow")
 
 heatmap.result <- scCNVis::makeSCHeatmap(obj,
-                                         group = "KClusters",
+                                         group = "Subclone",
                                          annotation.colors = annotation.colors,
                                          heatmap.colors = heatmap.colors)
 ```
@@ -135,16 +129,13 @@ heatmap.result <- scCNVis::makeSCHeatmap(obj,
 knitr::include_graphics("1c_heatmap.png")
 ```
 
-Alternatively, you may create groups using any other method you choose, such
-as sample of origin, phenotype data, or dynamic clusters. In this example,
-I use the dynamicTreeCut package to dynamically cluster the cells and group
-the heatmap using the resulting clusters. I am interested in what proportion
-of each dynamic cluster comes from each sample, so I set the `secondary.group`
-as the `Sample` metadata column. This will create barplots showing the percent
-of cells within each cluster that came from each sample - this is useful if you
-suspect that some clusters are sample-specific while others are shared across samples.
+`makeSCHeatmap` allows us to identify secondary grouping. For example,
+if our data included cells from two samples, we can display what percentage of
+our subclones were derived from each sample. Since our example data is all from
+a single sample, let us add fake sample labels as metadata and perform secondary
+grouping on those fake sample names.
 
-`makeSCHeatmap()` also accepts custom functions that can be applied to the plot
+Furthermore, `makeSCHeatmap()` accepts custom functions that can be applied to the plot
 data. The custom function should accept an input `data.frame` and return a
 `data.frame` with the same dimensions and the same row/column order. Column names
 and row names should not be altered. For visual clarity, let's add a function
@@ -152,14 +143,15 @@ that changes all values within 1 standard deviation of the mean to be the mean,
 so we can focus on whatever strong signals may be present in our data.
 
 ```{r}
-dynamic.kclusters <- dynamicTreeCut::cutreeDynamic(dendro = hc_re, 
-                                                   distM = as.matrix(dist),
-                                                   deepSplit = 0,
-                                                   pamRespectsDendro = TRUE
-                                                   )
-names(dynamic.kclusters) <- hc_re$labels
-obj <- scCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
+#Generate fake sample names and add it to our scCNVisObject
+ncells <- nrow(obj@Matrix) #number of cells
+fake.sample.names <- c("FakeSampleA", "FakeSampleB")
+set.seed(42)
+fake.samples <- sample(fake.sample.names, size = ncells, replace = TRUE)
+obj <- scCNVis::addMetaData(obj, fake.samples, colname = "FakeSampleNames")
 
+#Custom function that takes all values within 1 standard deviation of the mean
+#and changes them to the mean, to minimize noise in the heatmap
 custom.func <- function(data) {
   sd.value <- sd(data, na.rm = TRUE)
   mean.value <- mean(data, na.rm = TRUE)
@@ -169,12 +161,13 @@ custom.func <- function(data) {
 
 
 heatmap.result <- scCNVis::makeSCHeatmap(obj,
-                                         group = "DynamicKClusters",
-                                         secondary.group = "Sample",
+                                         group = "Subclone",
+                                         secondary.group = "FakeSampleNames",
                                          post.plot.mod.fun = custom.func,
                                          heatmap.colors = heatmap.colors,
+                                         annotation.colors = annotation.colors,
                                          border = TRUE)
 ```
-```{r echo=FALSE, fig.cap="Example 1d. Heatmap with dynamic clusters", out.width = '100%'}
+```{r echo=FALSE, fig.cap="Example 1d. Grouped heatmap with secondary group info", out.width = '100%'}
 knitr::include_graphics("1d_heatmap.png")
 ```

@@ -216,7 +216,7 @@ saveCustomPlot <- function(obj, filename, width = 14, height = 7, format = "png"
   }
 
   #Non-heatmaps
-  if(length(p)>1) {
+  if(length(p)>1 || class(p)[1] == "ggplot2::ggplot") {
     if (format == "png") {
       ggplot2::ggsave(filename, p, width = width, height = height, units = "in", dpi = 700)
     }
@@ -224,7 +224,7 @@ saveCustomPlot <- function(obj, filename, width = 14, height = 7, format = "png"
       ggplot2::ggsave(filename, p, width = width, height = height, units = "in", dpi = 700)
     }
   }
-  else if(class(p) == "Heatmap") {
+  else if(class(p)[1] == "Heatmap") {
     if (format == "png") {
 
       if(length(heatmap.result$PlotData$Legend) == 2) {
