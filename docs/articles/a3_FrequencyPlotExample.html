@@ -91,16 +91,16 @@ sequencing studies to show how frequently different regions of the
 genome are altered. A similar approach can be done in single cell data
 by pseudobulking the cells and then thresholding the values to label
 each region as a loss or gain for the pseudobulked values.</p>
-<p>By default, the <code><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot()</a></code> function will take
-group all cells based on their sample of origin (or whatever metadata
-column is provided to the <code>group</code> parameter) and take the
-mean copy number value for that group at each genomic bin. It will then
-perform thresholding to label regions as loss/neutral/gain. As a primary
+<p>By default, the <code><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot()</a></code> function will group
+all cells based on their sample of origin (or whatever metadata column
+is provided to the <code>group</code> parameter) and take the mean copy
+number value for that group at each genomic bin. It will then perform
+thresholding to label regions as loss/neutral/gain. As a primary
 example, we can begin with the example data and use the default values
 for the function.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">scCNVis</span><span class="op">)</span></span>
-<span></span>
+<span><span class="co">#Create object using provided example data</span></span>
 <span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">example.matrix</span>,</span>
 <span>                                 <span class="va">example.cells</span>,</span>
 <span>                                 <span class="va">example.granges</span>,</span>
@@ -109,7 +109,7 @@ for the function.</p>
 <span></span>
 <span><span class="co">#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
 <div class="figure">
-<img src="1a_frequencyplot.png" alt="Example 1a. Frequency Plot" width="100%"><p class="caption">
+<img src="1a_frequencyplot.png" class="r-plt" alt="Example 1a. Frequency Plot" width="100%"><p class="caption">
 Example 1a. Frequency Plot
 </p>
 </div>
@@ -117,32 +117,16 @@ Example 1a. Frequency Plot
 that a percentage of our pseudobulked samples have gains in those
 regions, while colored regions below 0 indicate that a percentage of our
 pseudbulked samples have losses in those regions. Since our example only
-has 2 samples, you can see that all values are 0%, 50%, or 100%.</p>
+has 1 sample, you can see that all values are 0% or 100%.</p>
 <p>While the default above is the standard use for a frequency plot,
 <code><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot()</a></code> includes some additional features that
 may help provide additional insights. For example, the pseudobulked
 values do not necessarily have to represent samples. In the below
-example, they represent subclones identified through clustering (see
-Heatmap example). The below example also shows how users can provide
-custom filtering thresholds to define gains and losses and how to color
-those values with custom colors.</p>
+example, they represent subclones from out metadata. The below example
+also shows how users can provide custom filtering thresholds to define
+gains and losses and how to color those values with custom colors.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#Calculate distance matrix values</span></span>
-<span><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu">parallelDist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/parallelDist/man/parDist.html" class="external-link">parallelDist</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">Matrix</span><span class="op">)</span></span>
-<span><span class="co">#Perform hierarchical clustering</span></span>
-<span><span class="va">hc_re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust</a></span><span class="op">(</span><span class="va">dist</span>, method<span class="op">=</span><span class="st">"ward.D2"</span><span class="op">)</span></span>
-<span><span class="co">#Dynamically assign clusters</span></span>
-<span><span class="va">dynamic.kclusters</span> <span class="op">&lt;-</span> <span class="fu">dynamicTreeCut</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dynamicTreeCut/man/cutreeDynamic.html" class="external-link">cutreeDynamic</a></span><span class="op">(</span>dendro <span class="op">=</span> <span class="va">hc_re</span>, </span>
-<span>                                                   distM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">dist</span><span class="op">)</span>,</span>
-<span>                                                   deepSplit <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>                                                   pamRespectsDendro <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>                                                   <span class="op">)</span></span>
-<span><span class="co">#&gt;  ..cutHeight not given, setting it to 292  ===&gt;  99% of the (truncated) height range in dendro.</span></span>
-<span><span class="co">#&gt;  ..done.</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">dynamic.kclusters</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">hc_re</span><span class="op">$</span><span class="va">labels</span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">dynamic.kclusters</span>, colname <span class="op">=</span> <span class="st">"DynamicKClusters"</span><span class="op">)</span></span>
-<span></span>
-<span></span>
+<code class="sourceCode R"><span></span>
 <span><span class="co">#Defining a custom thresholding function</span></span>
 <span><span class="co">#The function will be passed a data.frame with the following format</span></span>
 <span><span class="co">#Columns: "chrm" "middle" "pos.index" "name" "value" </span></span>
@@ -167,52 +151,57 @@ those values with custom colors.</p>
 <span>    <span class="op">}</span></span>
 <span></span>
 <span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
-<span>                                        group <span class="op">=</span> <span class="st">"DynamicKClusters"</span>,</span>
+<span>                                        group <span class="op">=</span> <span class="st">"Subclone"</span>,</span>
 <span>                                        data.func <span class="op">=</span> <span class="va">custom.data.func</span>,</span>
 <span>                                        gain.color <span class="op">=</span> <span class="st">"green"</span>,</span>
 <span>                                        loss.color <span class="op">=</span> <span class="st">"purple"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
 <div class="figure">
-<img src="1b_frequencyplot.png" alt="Example 1b. Frequency Plot, pseudobulked subclones" width="100%"><p class="caption">
+<img src="1b_frequencyplot.png" class="r-plt" alt="Example 1b. Frequency Plot, pseudobulked subclones" width="100%"><p class="caption">
 Example 1b. Frequency Plot, pseudobulked subclones
 </p>
 </div>
+<p>As our data had 4 defined subclones, we can see that the available
+values in our frequency plot are now 0%, 25%, 50%, 75% and 100%. We can
+observe that 100% of our subclones had loss on parts of chr1 and chr19,
+while only half of them had loss on chr4.</p>
 <p>In some cases, it may be desirable to group values together. In the
-below hypothetical example, we say that our data comes from 10 samples,
-5 of which have “Phenotype A” and 5 of which have “Phenotype B”. Gains
-and losses are calculated for each sample, but frequencies and plot
-groupings are done based on samples that match each phenotype.</p>
-<p>When using the <code>secondary.group</code> parameter, it is
-important to make sure that each value in <code>group</code> overlaps
-with exactly one value in the <code>secondary.group</code>. Otherwise,
-averages and frequencies may be distorted.</p>
-<p>In this arbitrary example, we see that both phenotypes frequently
-have gain on chromosomes 4-8 and 13, but other chromosomes have distinct
-profiles.</p>
+below hypothetical example, we will pretend that each of our subclones
+represent a sample, and that two of those samples have Phenotype A and
+two of them have Phenotype B.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#Recreate our plot object, but change our example meta data</span></span>
-<span><span class="va">new.meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Sample"</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>,</span>
-<span>                      Phenotype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Phenotype A"</span>, <span class="fl">500</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Phenotype B"</span>, <span class="fl">500</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">new.meta</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">example.cells</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="va">new.meta</span> <span class="op">&lt;-</span> <span class="va">obj</span><span class="op">@</span><span class="va">Meta</span></span>
 <span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/createPlotObject.html">createPlotObject</a></span><span class="op">(</span><span class="va">example.matrix</span>,</span>
-<span>                                 <span class="va">example.cells</span>,</span>
-<span>                                 <span class="va">example.granges</span>,</span>
-<span>                                 <span class="va">new.meta</span><span class="op">)</span></span>
+<span><span class="co">#Pretend that subclones represent samples, and assign phenotypes to those samples</span></span>
+<span><span class="va">new.meta</span><span class="op">$</span><span class="va">NewSample</span> <span class="op">&lt;-</span> <span class="va">new.meta</span><span class="op">$</span><span class="va">Subclone</span></span>
+<span><span class="va">subclone.names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">Meta</span><span class="op">$</span><span class="va">Subclone</span><span class="op">)</span></span>
+<span><span class="va">new.meta</span><span class="op">$</span><span class="va">NewPhenotype</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">new.meta</span><span class="op">$</span><span class="va">Subclone</span> <span class="op">==</span> <span class="va">subclone.names</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">|</span> </span>
+<span>                                  <span class="va">new.meta</span><span class="op">$</span><span class="va">Subclone</span> <span class="op">==</span> <span class="va">subclone.names</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="st">"Phenotype A"</span>, <span class="st">"Phenotype B"</span><span class="op">)</span></span>
 <span></span>
 <span></span>
+<span><span class="co">#Add the hypothetical metadata to our scCNVisObject</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">new.meta</span><span class="op">$</span><span class="va">NewSample</span>, <span class="st">"NewSample"</span><span class="op">)</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">new.meta</span><span class="op">$</span><span class="va">NewPhenotype</span>, <span class="st">"NewPhenotype"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#Frequencies are calculated by 'NewSample' and 'NewPhenotype' groupings</span></span>
 <span><span class="va">fp.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeFrequencyPlot.html">makeFrequencyPlot</a></span><span class="op">(</span><span class="va">obj</span>,</span>
-<span>                                        group <span class="op">=</span> <span class="st">"Sample"</span>,</span>
-<span>                                        secondary.group <span class="op">=</span> <span class="st">"Phenotype"</span><span class="op">)</span></span>
+<span>                                        group <span class="op">=</span> <span class="st">"NewSample"</span>,</span>
+<span>                                        secondary.group <span class="op">=</span> <span class="st">"NewPhenotype"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
 <div class="figure">
-<img src="1c_frequencyplot.png" alt="Example 1c. Frequency Plot, pseudobulked subclones grouped by arbitrary phenotype" width="100%"><p class="caption">
+<img src="1c_frequencyplot.png" class="r-plt" alt="Example 1c. Frequency Plot, pseudobulked subclones grouped by arbitrary phenotype" width="100%"><p class="caption">
 Example 1c. Frequency Plot, pseudobulked subclones grouped by arbitrary
 phenotype
 </p>
 </div>
+<p>Our results are now grouped by phenotype. Since each (arbitrary)
+phenotype had two hypothetical samples assigned to them, we see that all
+values are either 0%, 50%, or 100%. We can observe that losses on chr12
+are only found in Phenotype B, while all “samples” that have Phenotype A
+appear to have a focal loss on chr17.</p>
 <p>Finally, like the <code><a href="../reference/makeLinePlot.html">makeLinePlot()</a></code> function, the output
 plot is a ggplot object, which means that users can freely alter the
 output like they would a standard ggplot figure. Additionaly,
@@ -227,7 +216,7 @@ example of this customization is shown below.</p>
 <span><span class="co">#of fp.result$PlotData can be done to find the "pos.index" value</span></span>
 <span><span class="co">#that overlaps with the location of genes of interest and used to add</span></span>
 <span><span class="co">#marker gene labels</span></span>
-<span><span class="va">pos.index.example.values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">500</span>, <span class="fl">1200</span><span class="op">)</span></span>
+<span><span class="va">pos.index.example.values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">300</span>, <span class="fl">7950</span><span class="op">)</span></span>
 <span><span class="va">marker.gene.names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GeneA"</span>, <span class="st">"GeneB"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">final.plot</span> <span class="op">&lt;-</span> <span class="va">fp.result</span><span class="op">$</span><span class="va">Plot</span> <span class="op">+</span></span>
@@ -242,9 +231,10 @@ example of this customization is shown below.</p>
 <span>                 plot.title <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#fp.result$Plot &lt;- final.plot</span></span>
-<span><span class="co">#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span></code></pre></div>
+<span><span class="co">#scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")</span></span>
+<span><span class="co">#or simply ggplot2::ggsave(final.plot)</span></span></code></pre></div>
 <div class="figure">
-<img src="1d_frequencyplot.png" alt="Example 1d. Frequency Plot with customization" width="100%"><p class="caption">
+<img src="1d_frequencyplot.png" class="r-plt" alt="Example 1d. Frequency Plot with customization" width="100%"><p class="caption">
 Example 1d. Frequency Plot with customization
 </p>
 </div>
@@ -265,7 +255,7 @@ Example 1d. Frequency Plot with customization
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>

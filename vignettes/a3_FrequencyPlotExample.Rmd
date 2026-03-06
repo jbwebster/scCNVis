@@ -2,7 +2,7 @@
 title: "Frequency Plot Example"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{FrequencyPlotExample}
+  %\VignetteIndexEntry{Frequency Plot Example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,7 +21,7 @@ similar approach can be done in single cell data by pseudobulking the cells and
 then thresholding the values to label each region as a loss or gain for the
 pseudobulked values.
 
-By default, the `makeFrequencyPlot()` function will take group all cells based
+By default, the `makeFrequencyPlot()` function will group all cells based
 on their sample of origin (or whatever metadata column is provided to the `group`
 parameter) and take the mean copy number value for that group at each genomic bin.
 It will then perform thresholding to label regions as loss/neutral/gain. As a primary
@@ -29,7 +29,7 @@ example, we can begin with the example data and use the default values for the f
 
 ```{r setup}
 library(scCNVis)
-
+#Create object using provided example data
 obj <- scCNVis::createPlotObject(example.matrix,
                                  example.cells,
                                  example.granges,
@@ -45,29 +45,15 @@ knitr::include_graphics("1a_frequencyplot.png")
 As with standard frequency plots, colored regions above 0 indicate that a percentage
 of our pseudobulked samples have gains in those regions, while colored regions below
 0 indicate that a percentage of our pseudbulked samples have losses in those regions.
-Since our example only has 2 samples, you can see that all values are 0%, 50%, or 100%.
+Since our example only has 1 sample, you can see that all values are 0% or 100%.
 
 While the default above is the standard use for a frequency plot, `makeFrequencyPlot()`
 includes some additional features that may help provide additional insights. For example,
 the pseudobulked values do not necessarily have to represent samples. In the below example,
-they represent subclones identified through clustering (see Heatmap example). The below
-example also shows how users can provide custom filtering thresholds to define gains and losses
-and how to color those values with custom colors.
+they represent subclones from out metadata. The below example also shows how users can provide
+custom filtering thresholds to define gains and losses and how to color those values with custom colors.
 
 ```{r}
-#Calculate distance matrix values
-dist <- parallelDist::parallelDist(obj@Matrix)
-#Perform hierarchical clustering
-hc_re <- hclust(dist, method="ward.D2")
-#Dynamically assign clusters
-dynamic.kclusters <- dynamicTreeCut::cutreeDynamic(dendro = hc_re, 
-                                                   distM = as.matrix(dist),
-                                                   deepSplit = 0,
-                                                   pamRespectsDendro = TRUE
-                                                   )
-names(dynamic.kclusters) <- hc_re$labels
-obj <- scCNVis::addMetaData(obj, dynamic.kclusters, colname = "DynamicKClusters")
-
 
 #Defining a custom thresholding function
 #The function will be passed a data.frame with the following format
@@ -93,7 +79,7 @@ custom.data.func <- function(data) {
     }
 
 fp.result <- scCNVis::makeFrequencyPlot(obj,
-                                        group = "DynamicKClusters",
+                                        group = "Subclone",
                                         data.func = custom.data.func,
                                         gain.color = "green",
                                         loss.color = "purple")
@@ -104,40 +90,46 @@ fp.result <- scCNVis::makeFrequencyPlot(obj,
 knitr::include_graphics("1b_frequencyplot.png")
 ```
 
+As our data had 4 defined subclones, we can see that the available values in our
+frequency plot are now 0%, 25%, 50%, 75% and 100%. We can observe that 100% of 
+our subclones had loss on parts of chr1 and chr19, while only half of them had
+loss on chr4.
+
 In some cases, it may be desirable to group values together. In the below hypothetical example,
-we say that our data comes from 10 samples, 5 of which have "Phenotype A" and 5 of which
-have "Phenotype B". Gains and losses are calculated for each sample, but frequencies and plot
-groupings are done based on samples that match each phenotype. 
-
-When using the `secondary.group` parameter, it is important to make sure that each value in `group`
-overlaps with exactly one value in the `secondary.group`. Otherwise, averages and frequencies
-may be distorted.
-
-In this arbitrary example, we see that both phenotypes frequently have gain on 
-chromosomes 4-8 and 13, but other chromosomes have distinct profiles.
+we will pretend that each of our subclones represent a sample, and that two of those
+samples have Phenotype A and two of them have Phenotype B.
 
 
 ```{r}
-#Recreate our plot object, but change our example meta data
-new.meta <- data.frame(Sample = rep(paste0("Sample", LETTERS[1:10]), each = 100),
-                      Phenotype = c(rep("Phenotype A", 500), rep("Phenotype B", 500)))
-rownames(new.meta) <- example.cells
 
-obj <- scCNVis::createPlotObject(example.matrix,
-                                 example.cells,
-                                 example.granges,
-                                 new.meta)
+new.meta <- obj@Meta
+
+#Pretend that subclones represent samples, and assign phenotypes to those samples
+new.meta$NewSample <- new.meta$Subclone
+subclone.names <- unique(obj@Meta$Subclone)
+new.meta$NewPhenotype <- ifelse(new.meta$Subclone == subclone.names[1] | 
+                                  new.meta$Subclone == subclone.names[2], "Phenotype A", "Phenotype B")
 
 
+#Add the hypothetical metadata to our scCNVisObject
+obj <- scCNVis::addMetaData(obj, new.meta$NewSample, "NewSample")
+obj <- scCNVis::addMetaData(obj, new.meta$NewPhenotype, "NewPhenotype")
+
+#Frequencies are calculated by 'NewSample' and 'NewPhenotype' groupings
 fp.result <- scCNVis::makeFrequencyPlot(obj,
-                                        group = "Sample",
-                                        secondary.group = "Phenotype")
+                                        group = "NewSample",
+                                        secondary.group = "NewPhenotype")
 
 #scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
 ```
 ```{r echo=FALSE, fig.cap="Example 1c. Frequency Plot, pseudobulked subclones grouped by arbitrary phenotype", out.width = '100%'}
 knitr::include_graphics("1c_frequencyplot.png")
 ```
+
+Our results are now grouped by phenotype. Since each (arbitrary) phenotype had
+two hypothetical samples assigned to them, we see that all values are either 0%, 50%,
+or 100%. We can observe that losses on chr12 are only found in Phenotype B, while
+all "samples" that have Phenotype A appear to have a focal loss on chr17.
 
 Finally, like the `makeLinePlot()` function, the output plot is a ggplot object,
 which means that users can freely alter the output like they would a standard ggplot
@@ -153,7 +145,7 @@ fp.result <- scCNVis::makeFrequencyPlot(obj)
 #of fp.result$PlotData can be done to find the "pos.index" value
 #that overlaps with the location of genes of interest and used to add
 #marker gene labels
-pos.index.example.values <- c(500, 1200)
+pos.index.example.values <- c(300, 7950)
 marker.gene.names <- c("GeneA", "GeneB")
 
 final.plot <- fp.result$Plot +
@@ -169,6 +161,7 @@ final.plot <- fp.result$Plot +
 
 #fp.result$Plot <- final.plot
 #scCNVis::saveCustomPlot(fp.result, "~/path/to/plot.png")
+#or simply ggplot2::ggsave(final.plot)
 ```
 ```{r echo=FALSE, fig.cap="Example 1d. Frequency Plot with customization", out.width = '100%'}
 knitr::include_graphics("1d_frequencyplot.png")

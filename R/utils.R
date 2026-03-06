@@ -99,7 +99,7 @@ addMetaData <- function(obj,meta,colname,cells=NULL) {
 #' @param cell.names A character vector containing unique cell names. Should be equal to the number of rows in input.matrix
 #' @param granges A GenomicRanges GRanges object, where each range in the object corresponds to a column in the input.matrix
 #' @param meta Data.frame of meta data. Rownames should be cell.names. At a minimum, it must include a "Sample" column.
-#' @return A list object containing 3 elements ("Matrix", "GRanges" and "Meta")
+#' @return A scCNVisObject containing 3 elements ("Matrix", "GRanges" and "Meta")
 #' @export
 createPlotObject <- function(input.matrix, cell.names, granges, meta) {
   .validObjectInputs(input.matrix, cell.names, granges, meta)
@@ -131,6 +131,63 @@ createPlotObject <- function(input.matrix, cell.names, granges, meta) {
              Meta = meta)
 }
 
+#' Create a scCNVis object for plotting
+#'
+#' This function creates a basic object containing the information needed
+#' to plot copy number data from a single-cell experiment, generated from
+#' the output object created by infercnv
+#'
+#' @param infercnv.obj Final object output by infercnv
+#' @param sample.name A string containing the name of the sample
+#' @return A scCNVisObject containing 3 elements ("Matrix", "GRanges" and "Meta")
+#' @export
+createPlotObjectFromInfercnv <- function(infercnv.obj, sample.name = "Sample") {
+  
+  ###
+  # Length of this depends on if infercnv subclustering was performed
+  observation.groups <- names(infercnv.obj@observation_grouped_cell_indices)
+  
+  ###
+  # Extract the indices from the infercnv matrix corresponding to observation cells
+  # and extract the group names for those cells 
+  observation.indices <- c()
+  group.name <- c()
+  for (group in observation.groups) {
+    indices <- infercnv.obj@observation_grouped_cell_indices[[group]]
+    observation.indices <- c(observation.indices, indices)
+    group.name <- c(group.name, rep(group, length(indices)))
+  }
+  
+  ###
+  # Extract matrix
+  observation.expr.data <- t(infercnv.obj@expr.data[,observation.indices])
+  
+  ###
+  # Extract cell names
+  cell.names <- rownames(observation.expr.data)
+  
+  ###
+  # Create genomic ranges object
+  g <- GenomicRanges::makeGRangesFromDataFrame(infercnv.obj@gene_order,
+                                               seqnames.field = "chr",
+                                               start.field = "start",
+                                               end.field = "stop")
+  
+  ###
+  # Create metadata. Has sample name and subclusters assigned by infercnv, if any
+  meta <- data.frame(Sample = rep(sample.name, length(cell.names)),
+                     Subclone = group.name)
+  meta <- .standardizeMeta(meta, cell.names)
+  
+  .validObjectInputs(observation.expr.data, cell.names, g, meta)
+  
+  g <- .standardizeGRanges(g)
+  
+  out <- new("scCNVisObject",
+             Matrix = observation.expr.data,
+             GRanges = g,
+             Meta = meta)
+}
 
 
 #' Helper function for saving a generated plot
@@ -159,7 +216,7 @@ saveCustomPlot <- function(obj, filename, width = 14, height = 7, format = "png"
   }
 
   #Non-heatmaps
-  if(length(p)>1) {
+  if(length(p)>1 || class(p)[1] == "ggplot2::ggplot") {
     if (format == "png") {
       ggplot2::ggsave(filename, p, width = width, height = height, units = "in", dpi = 700)
     }
@@ -167,7 +224,7 @@ saveCustomPlot <- function(obj, filename, width = 14, height = 7, format = "png"
       ggplot2::ggsave(filename, p, width = width, height = height, units = "in", dpi = 700)
     }
   }
-  else if(class(p) == "Heatmap") {
+  else if(class(p)[1] == "Heatmap") {
     if (format == "png") {
 
       if(length(heatmap.result$PlotData$Legend) == 2) {

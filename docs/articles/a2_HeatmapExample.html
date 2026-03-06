@@ -109,7 +109,7 @@ GenomicRanges::GRanges object (accessible as <code>obj@GRanges</code>).
 It also contains metadata associated with each cell, if provided.</p>
 <p>For example, a simple heatmap can be created using the following:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#Set color scale</span></span>
+<code class="sourceCode R"><span><span class="co">#Set custom color scale</span></span>
 <span><span class="va">heatmap.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">heatmap.colors</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Blue"</span>,<span class="st">"White"</span>,<span class="st">"Red"</span><span class="op">)</span></span>
 <span></span>
@@ -142,94 +142,84 @@ the heatmap is also shown below.</p>
 <span><span class="co">#Simple wrapper for convenience</span></span>
 <span><span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/saveCustomPlot.html">saveCustomPlot</a></span><span class="op">(</span><span class="va">heatmap.result</span>, <span class="st">"/path/to/heatmap.png"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="1a_heatmap.png" alt="Example 1a. Heatmap" width="100%"><p class="caption">
+<img src="1a_heatmap.png" class="r-plt" alt="Example 1a. Heatmap" width="100%"><p class="caption">
 Example 1a. Heatmap
 </p>
 </div>
-<p>The heatmap could be further customized if metadata has been
-provided. At the same time, we may choose to limit our plot to specific
-regions of interest. For this example, we may choose to focus only on
-chr7 and chrX, as seen below:</p>
+<p>The heatmap can be annotated if metadata has been provided. If
+needed, metadata groupings can be added using the
+<code><a href="../reference/addMetaData.html">addMetaData()</a></code> function. At the same time, we may choose to
+limit our plot to specific regions of interest. For this example, we may
+choose to exclude chr22, as seen below:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">plot.regions</span> <span class="op">&lt;-</span> <span class="va">example.granges</span><span class="op">[</span><span class="va">example.granges</span><span class="op">@</span><span class="va">seqnames</span> <span class="op">==</span> <span class="st">"chr7"</span> <span class="op">|</span></span>
-<span>                                  <span class="va">example.granges</span><span class="op">@</span><span class="va">seqnames</span> <span class="op">==</span> <span class="st">"chrX"</span>,<span class="op">]</span></span>
+<code class="sourceCode R"><span><span class="va">plot.regions</span> <span class="op">&lt;-</span> <span class="va">example.granges</span><span class="op">[</span><span class="va">example.granges</span><span class="op">@</span><span class="va">seqnames</span> <span class="op">!=</span> <span class="st">"chr22"</span>,<span class="op">]</span></span>
 <span></span>
 <span><span class="co">#If using a basic annotation as shown here and you want to specify colors,</span></span>
 <span><span class="co">#it should be provided as a named list</span></span>
 <span><span class="co">#The data here should be consistent with whatever metadata was added to the</span></span>
-<span><span class="co">#scCNVis object. In this case, our 'Sample' column says all cells came</span></span>
-<span><span class="co">#from either 'SampleA' or 'SampleB'</span></span>
-<span><span class="va">annotation.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Sample <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleA"</span> <span class="op">=</span> <span class="st">"red"</span>, <span class="st">"SampleB"</span> <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#scCNVis object. In this case, our example meta data had 4 subclones. </span></span>
+<span><span class="co">#This is optional.</span></span>
+<span><span class="va">colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>,<span class="st">"blue"</span>,<span class="st">"green"</span>,<span class="st">"yellow"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">colors</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">Meta</span><span class="op">$</span><span class="va">Subclone</span><span class="op">)</span></span>
+<span><span class="va">annotation.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Subclone <span class="op">=</span> <span class="va">colors</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
 <span>                                         gr <span class="op">=</span> <span class="va">plot.regions</span>,</span>
-<span>                                         annotations <span class="op">=</span> <span class="st">"Sample"</span>,</span>
+<span>                                         annotations <span class="op">=</span> <span class="st">"Subclone"</span>,</span>
 <span>                                         show.annotation.name <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                                         annotation.colors <span class="op">=</span> <span class="va">annotation.colors</span>,</span>
-<span>                                         heatmap.colors <span class="op">=</span> <span class="va">heatmap.colors</span><span class="op">)</span></span></code></pre></div>
+<span>                                         heatmap.colors <span class="op">=</span> <span class="va">heatmap.colors</span><span class="op">)</span></span>
+<span><span class="co">#Save the result</span></span>
+<span><span class="co">#scCNVis::saveCustomPlot(heatmap.result, "/path/to/heatmap.png")</span></span></code></pre></div>
 <div class="figure">
-<img src="1b_heatmap.png" alt="Example 1b. Heatmap of chr7 and chrX, with sample annotation" width="50%"><p class="caption">
+<img src="1b_heatmap.png" class="r-plt" alt="Example 1b. Heatmap of chr7 and chrX, with sample annotation" width="100%"><p class="caption">
 Example 1b. Heatmap of chr7 and chrX, with sample annotation
 </p>
 </div>
-<p>We can see that there are at least 2 seemingly distinct clusters
-present in our heatmap. To simplify our heatmap, we may wish to present
-the data as a simple average of those groups. To do so, we must add
-metadata to the scCNVis object to assign each cell to a group, then tell
-the makeSCHeatmap function which metadata column to group the cells by.
-Whenever the heatmap is the result of grouped data, the right side of
-the plot will show the number of cells described by each group.</p>
+<p>To simplify our heatmap, we may wish to present the data as a simple
+average of our subclones, rather than plotting every individual cell in
+those subclones. Whenever the heatmap is the result of grouped data, the
+right side of the plot will show the number of cells described by each
+group.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#Calculate distance matrix values</span></span>
-<span><span class="va">dist</span> <span class="op">&lt;-</span> <span class="fu">parallelDist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/parallelDist/man/parDist.html" class="external-link">parallelDist</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">Matrix</span><span class="op">)</span></span>
-<span><span class="co">#Perform hierarchical clustering</span></span>
-<span><span class="va">hc_re</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/hclust.html" class="external-link">hclust</a></span><span class="op">(</span><span class="va">dist</span>, method<span class="op">=</span><span class="st">"ward.D2"</span><span class="op">)</span></span>
-<span><span class="co">#Split the hierarchical clustering into two groups</span></span>
-<span><span class="va">kclusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cutree.html" class="external-link">cutree</a></span><span class="op">(</span><span class="va">hc_re</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">kclusters</span>, colname <span class="op">=</span> <span class="st">"KClusters"</span><span class="op">)</span></span>
-<span></span>
+<code class="sourceCode R"><span></span>
 <span><span class="co">#If using a grouping method, the way to supply annotation colors changes.</span></span>
 <span><span class="co">#In this case, they can simply be supplied as a character vector</span></span>
-<span><span class="va">annotation.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"yellow"</span><span class="op">)</span></span>
+<span><span class="va">annotation.colors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"red"</span>,<span class="st">"blue"</span>,<span class="st">"green"</span>,<span class="st">"yellow"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
-<span>                                         group <span class="op">=</span> <span class="st">"KClusters"</span>,</span>
+<span>                                         group <span class="op">=</span> <span class="st">"Subclone"</span>,</span>
 <span>                                         annotation.colors <span class="op">=</span> <span class="va">annotation.colors</span>,</span>
 <span>                                         heatmap.colors <span class="op">=</span> <span class="va">heatmap.colors</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="1c_heatmap.png" alt="Example 1c. Heatmap with pre-specified clusters" width="100%"><p class="caption">
+<img src="1c_heatmap.png" class="r-plt" alt="Example 1c. Heatmap with pre-specified clusters" width="100%"><p class="caption">
 Example 1c. Heatmap with pre-specified clusters
 </p>
 </div>
-<p>Alternatively, you may create groups using any other method you
-choose, such as sample of origin, phenotype data, or dynamic clusters.
-In this example, I use the dynamicTreeCut package to dynamically cluster
-the cells and group the heatmap using the resulting clusters. I am
-interested in what proportion of each dynamic cluster comes from each
-sample, so I set the <code>secondary.group</code> as the
-<code>Sample</code> metadata column. This will create barplots showing
-the percent of cells within each cluster that came from each sample -
-this is useful if you suspect that some clusters are sample-specific
-while others are shared across samples.</p>
-<p><code><a href="../reference/makeSCHeatmap.html">makeSCHeatmap()</a></code> also accepts custom functions that can
-be applied to the plot data. The custom function should accept an input
-<code>data.frame</code> and return a <code>data.frame</code> with the
-same dimensions and the same row/column order. Column names and row
-names should not be altered. For visual clarity, let’s add a function
-that changes all values within 1 standard deviation of the mean to be
-the mean, so we can focus on whatever strong signals may be present in
-our data.</p>
+<p><code>makeSCHeatmap</code> allows us to identify secondary grouping.
+For example, if our data included cells from two samples, we can display
+what percentage of our subclones were derived from each sample. Since
+our example data is all from a single sample, let us add fake sample
+labels as metadata and perform secondary grouping on those fake sample
+names.</p>
+<p>Furthermore, <code><a href="../reference/makeSCHeatmap.html">makeSCHeatmap()</a></code> accepts custom functions
+that can be applied to the plot data. The custom function should accept
+an input <code>data.frame</code> and return a <code>data.frame</code>
+with the same dimensions and the same row/column order. Column names and
+row names should not be altered. For visual clarity, let’s add a
+function that changes all values within 1 standard deviation of the mean
+to be the mean, so we can focus on whatever strong signals may be
+present in our data.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dynamic.kclusters</span> <span class="op">&lt;-</span> <span class="fu">dynamicTreeCut</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/dynamicTreeCut/man/cutreeDynamic.html" class="external-link">cutreeDynamic</a></span><span class="op">(</span>dendro <span class="op">=</span> <span class="va">hc_re</span>, </span>
-<span>                                                   distM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">dist</span><span class="op">)</span>,</span>
-<span>                                                   deepSplit <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>                                                   pamRespectsDendro <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span>                                                   <span class="op">)</span></span>
-<span><span class="co">#&gt;  ..cutHeight not given, setting it to 292  ===&gt;  99% of the (truncated) height range in dendro.</span></span>
-<span><span class="co">#&gt;  ..done.</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">dynamic.kclusters</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">hc_re</span><span class="op">$</span><span class="va">labels</span></span>
-<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">dynamic.kclusters</span>, colname <span class="op">=</span> <span class="st">"DynamicKClusters"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co">#Generate fake sample names and add it to our scCNVisObject</span></span>
+<span><span class="va">ncells</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">obj</span><span class="op">@</span><span class="va">Matrix</span><span class="op">)</span> <span class="co">#number of cells</span></span>
+<span><span class="va">fake.sample.names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FakeSampleA"</span>, <span class="st">"FakeSampleB"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="va">fake.samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">fake.sample.names</span>, size <span class="op">=</span> <span class="va">ncells</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/addMetaData.html">addMetaData</a></span><span class="op">(</span><span class="va">obj</span>, <span class="va">fake.samples</span>, colname <span class="op">=</span> <span class="st">"FakeSampleNames"</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co">#Custom function that takes all values within 1 standard deviation of the mean</span></span>
+<span><span class="co">#and changes them to the mean, to minimize noise in the heatmap</span></span>
 <span><span class="va">custom.func</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">sd.value</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">data</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span>  <span class="va">mean.value</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">data</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -239,14 +229,15 @@ our data.</p>
 <span></span>
 <span></span>
 <span><span class="va">heatmap.result</span> <span class="op">&lt;-</span> <span class="fu">scCNVis</span><span class="fu">::</span><span class="fu"><a href="../reference/makeSCHeatmap.html">makeSCHeatmap</a></span><span class="op">(</span><span class="va">obj</span>,</span>
-<span>                                         group <span class="op">=</span> <span class="st">"DynamicKClusters"</span>,</span>
-<span>                                         secondary.group <span class="op">=</span> <span class="st">"Sample"</span>,</span>
+<span>                                         group <span class="op">=</span> <span class="st">"Subclone"</span>,</span>
+<span>                                         secondary.group <span class="op">=</span> <span class="st">"FakeSampleNames"</span>,</span>
 <span>                                         post.plot.mod.fun <span class="op">=</span> <span class="va">custom.func</span>,</span>
 <span>                                         heatmap.colors <span class="op">=</span> <span class="va">heatmap.colors</span>,</span>
+<span>                                         annotation.colors <span class="op">=</span> <span class="va">annotation.colors</span>,</span>
 <span>                                         border <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="1d_heatmap.png" alt="Example 1d. Heatmap with dynamic clusters" width="100%"><p class="caption">
-Example 1d. Heatmap with dynamic clusters
+<img src="1d_heatmap.png" class="r-plt" alt="Example 1d. Grouped heatmap with secondary group info" width="100%"><p class="caption">
+Example 1d. Grouped heatmap with secondary group info
 </p>
 </div>
   </div>
@@ -266,7 +257,7 @@ Example 1d. Heatmap with dynamic clusters
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>

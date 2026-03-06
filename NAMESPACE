@@ -3,6 +3,7 @@
 export(addMetaData)
 export(ataCNVToGRanges)
 export(createPlotObject)
+export(createPlotObjectFromInfercnv)
 export(makeFrequencyPlot)
 export(makeLinePlot)
 export(makeSCHeatmap)

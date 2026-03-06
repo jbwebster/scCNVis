@@ -2,12 +2,12 @@
 % Please edit documentation in R/utils.R
 \name{addMetaData}
 \alias{addMetaData}
-\title{Add a column to the metadata held in the SCCNVis object}
+\title{Add a column to the metadata held in the scCNVis object}
 \usage{
 addMetaData(obj, meta, colname, cells = NULL)
 }
 \arguments{
-\item{obj}{SCCNVis object to add metadata to}
+\item{obj}{scCNVis object to add metadata to}
 
 \item{meta}{Vector of values to be added to the metadata}
 
@@ -16,8 +16,8 @@ addMetaData(obj, meta, colname, cells = NULL)
 \item{cells}{Cells to add metadata to. If NULL, it is assumed that meta contains one value for each cell and is in the same order as the object's current metadata. If provided, it should be in the same order as meta. Default = NULL}
 }
 \value{
-SCCNVis object with updated metadata
+scCNVis object with updated metadata
 }
 \description{
-Add a column to the metadata held in the SCCNVis object
+Add a column to the metadata held in the scCNVis object
 }
